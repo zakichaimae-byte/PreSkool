@@ -1,8 +1,93 @@
-<!DOCTYPE html>
-<html>
-<body>
-    <h1>Bravo Admin !</h1>
-    <p>Tu es maintenant sur le Dashboard de PreSkool.</p>
-    <a href="{% url 'login' %}">Retour au login</a>
-</body>
-</html>
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title text-primary">Tableau de Bord</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active">Session : 
+                    <span class="badge badge-pill badge-info ml-2 px-3 py-2">
+                        {% if user.is_superuser %} Administrateur 
+                        {% elif user.groups.all.0.name == "Enseignant" %} Enseignant 
+                        {% else %} Étudiant {% endif %}
+                    </span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% if user.is_superuser %}
+        <div class="col-xl-4 col-sm-6 col-12 d-flex mb-4">
+            <div class="card bg-one w-100 border-0 shadow-sm">
+                <div class="card-body p-4"> 
+                    <div class="db-widgets d-flex align-items-center">
+                        <div class="db-icon mr-3"><i class="fas fa-user-graduate"></i></div>
+                        <div class="db-info text-left" style="overflow: hidden;">
+                            <h6 class="text-dark mb-1" style="white-space: nowrap;">Total Étudiants</h6>
+                            <h3 class="text-dark font-weight-bold mb-0">450</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6 col-12 d-flex mb-4">
+            <div class="card bg-two w-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="db-widgets d-flex align-items-center">
+                        <div class="db-icon mr-3"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <div class="db-info text-left" style="overflow: hidden;">
+                            <h6 class="text-dark mb-1" style="white-space: nowrap;">Enseignants</h6>
+                            <h3 class="text-dark font-weight-bold mb-0">35</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6 col-12 d-flex mb-4">
+            <div class="card bg-three w-100 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="db-widgets d-flex align-items-center">
+                        <div class="db-icon mr-3"><i class="fas fa-building"></i></div>
+                        <div class="db-info text-left" style="overflow: hidden;">
+                            <h6 class="text-dark mb-1" style="white-space: nowrap;">Départements</h6>
+                            <h3 class="text-dark font-weight-bold mb-0">8</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4 p-md-5"> 
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="font-weight-bold mb-3">
+                            Bienvenue sur <span class="text-primary">PreSkool</span>, {{ user.username|capfirst }} !
+                        </h2>
+                        <p class="lead text-muted mb-4">
+                            Vous êtes actuellement connecté en tant qu'<b>{% if user.is_superuser %}Administrateur Système{% elif user.groups.all.0.name == "Enseignant" %}Professeur{% else %}Étudiant{% endif %}</b>.
+                        </p>
+                        <div class="pt-3 border-top">
+                            <span class="text-secondary"><i class="far fa-calendar-alt mr-2"></i>Date du jour :</span>
+                            <span class="font-weight-bold ml-1">26 Mars 2026</span>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center d-none d-lg-block">
+                        <i class="fas fa-school fa-10x text-light opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
