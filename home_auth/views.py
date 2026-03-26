@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 def login_view(request):
     if request.method == 'POST':
@@ -32,3 +33,8 @@ def login_view(request):
 @login_required(login_url='login')
 def dashboard_view(request):
     return render(request, 'dashboard.html')
+
+def logout_view(request):
+    logout(request)
+    messages.info(request, "Vous avez été déconnecté.")
+    return redirect('login')
