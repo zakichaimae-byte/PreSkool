@@ -1,0 +1,58 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Emploi du temps</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
+                <li class="breadcrumb-item active">Emploi du temps</li>
+            </ul>
+        </div>
+        <div class="col-auto text-right float-right ml-auto">
+            <a href="{% url 'timetable_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card card-table">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Jour</th>
+                                <th>Classe</th>
+                                <th>Matière</th>
+                                <th>Enseignant</th>
+                                <th>Début</th>
+                                <th>Fin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in timetables %}
+                            <tr>
+                                <td>{{ entry.day_of_week }}</td>
+                                <td>{{ entry.class_name }}</td>
+                                <td>{{ entry.subject.name }}</td>
+                                <td>{{ entry.teacher.first_name }} {{ entry.teacher.last_name }}</td>
+                                <td>{{ entry.start_time }}</td>
+                                <td>{{ entry.end_time }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucun emploi du temps disponible.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

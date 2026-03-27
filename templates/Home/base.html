@@ -11,6 +11,7 @@
       <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
       <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
       <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+      <link rel="stylesheet" href="{% static 'assets/css/premium_dashboard.css' %}">
    </head>
    <body>
       <div class="main-wrapper">
@@ -72,7 +73,7 @@
                         <a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> <span>Tableau de bord</span></a>
                      </li>
 
-                     {# --- LOGIQUE DE MENU PAR RÔLE --- #}
+                      {# --- LOGIQUE DE MENU PAR RÔLE --- #}
                      {% if user.is_superuser %}
                         <li class="menu-title"><span>Administration</span></li>
                         <li class="submenu">
@@ -85,18 +86,28 @@
                         <li class="submenu">
                            <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Enseignants</span> <span class="menu-arrow"></span></a>
                            <ul>
-                              <li><a href="">Liste des enseignants</a></li>
-                              <li><a href="">Ajouter un enseignant</a></li>
+                              <li><a href="{% url 'teacher_list' %}">Liste des enseignants</a></li>
+                              <li><a href="{% url 'teacher_add' %}">Ajouter un enseignant</a></li>
                            </ul>
                         </li>
                         <li class="submenu">
                            <a href="#"><i class="fas fa-building"></i> <span> Départements</span> <span class="menu-arrow"></span></a>
                            <ul>
-                              <li><a href="">Liste des départements</a></li>
-                              <li><a href="">Ajouter un département</a></li>
+                              <li><a href="{% url 'department_list' %}">Liste des départements</a></li>
+                              <li><a href="{% url 'department_add' %}">Ajouter un département</a></li>
                            </ul>
                         </li>
-                        <li><a href=""><i class="fas fa-file-invoice-dollar"></i> <span>Comptabilité</span></a></li>
+                        <li class="submenu">
+                           <a href="#"><i class="fas fa-book-reader"></i> <span> Matières</span> <span class="menu-arrow"></span></a>
+                           <ul>
+                              <li><a href="{% url 'subject_list' %}">Liste des matières</a></li>
+                              <li><a href="{% url 'subject_add' %}">Ajouter une matière</a></li>
+                           </ul>
+                        </li>
+                        <li class="menu-title"><span>Gestion Académique</span></li>
+                        <li><a href="{% url 'exam_list' %}"><i class="fas fa-clipboard-list"></i> <span>Examens</span></a></li>
+                        <li><a href="{% url 'holiday_list' %}"><i class="fas fa-calendar-check"></i> <span>Vacances</span></a></li>
+                        <li><a href="{% url 'timetable_list' %}"><i class="fas fa-table"></i> <span>Emploi du temps</span></a></li>
 
                      {% elif user.groups.all.0.name == "Enseignant" %}
                         <li class="menu-title"><span>Espace Enseignant</span></li>
