@@ -11,8 +11,10 @@ class Holiday(models.Model):
 class Exam(models.Model):
     name = models.CharField(max_length=200)
     subject = models.ForeignKey('subjects.Subject', on_delete=models.CASCADE, related_name='exams')
-    date = models.DateField()
-    start_time = models.TimeField()
+    date = models.DateField(null=True, blank=True)
+    start_time = models.TimeField(null=True, blank=True)
+    coefficient = models.IntegerField(default=1)
+    duration = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return f"{self.name} - {self.subject.name}"

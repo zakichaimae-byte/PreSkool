@@ -27,6 +27,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nom</th>
+                                <th>Enseignants</th>
                                 <th>Date d'établissement</th>
                                 <th class="text-right">Action</th>
                             </tr>
@@ -38,6 +39,7 @@
                                 <td>
                                     <h2><a>{{ dept.name }}</a></h2>
                                 </td>
+                                <td>{{ dept.teachers.count }}</td>
                                 <td>{{ dept.established_date }}</td>
                                 <td class="text-right">
                                     <div class="actions">

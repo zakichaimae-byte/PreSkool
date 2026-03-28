@@ -29,6 +29,8 @@
                                 <th>Matière</th>
                                 <th>Date</th>
                                 <th>Heure</th>
+                                <th>Coefficient</th>
+                                <th>Durée</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -36,12 +38,14 @@
                             <tr>
                                 <td>{{ exam.name }}</td>
                                 <td>{{ exam.subject.name }}</td>
-                                <td>{{ exam.date }}</td>
-                                <td>{{ exam.start_time }}</td>
+                                <td>{{ exam.date|default:"-" }}</td>
+                                <td>{{ exam.start_time|default:"-" }}</td>
+                                <td>{{ exam.coefficient }}</td>
+                                <td>{{ exam.duration }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="4" class="text-center">Aucun examen trouvé.</td>
+                                <td colspan="6" class="text-center">Aucun examen trouvé.</td>
                             </tr>
                             {% endfor %}
                         </tbody>

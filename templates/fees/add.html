@@ -1,0 +1,65 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Ajouter un Paiement</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'fee_list' %}">Frais</a></li>
+                <li class="breadcrumb-item active">Ajouter</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Étudiant</label>
+                                <select name="student" class="form-control" required>
+                                    <option value="">Sélectionner un étudiant</option>
+                                    {% for student in students %}
+                                    <option value="{{ student.id }}">{{ student.first_name }} {{ student.last_name }} ({{ student.student_id }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Montant (DH)</label>
+                                <input type="number" step="0.01" name="amount" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Statut</label>
+                                <select name="status" class="form-control">
+                                    <option value="Pending">En attente</option>
+                                    <option value="Paid">Payé</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea name="description" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
