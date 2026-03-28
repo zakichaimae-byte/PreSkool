@@ -1,13 +1,14 @@
 {% extends 'Home/base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block body %}
 <!-- Hero Banner Section -->
 <div class="hero-banner" style="background-image: url('{% static 'assets/img/banner.png' %}');">
     <div class="hero-content">
         <div class="welcome-text">
-            <h2 class="text-white">Bienvenue sur <span class="text-warning">PreSkool</span></h2>
-            <p class="lead">Tableau de bord de gestion scolaire intelligent et moderne.</p>
+            <h2 class="text-white">{{ welcome_to }} <span class="text-warning">PreSkool</span></h2>
+            <p class="lead">{{ dashboard_subtitle }}</p>
         </div>
         <div class="mt-4">
             <span class="badge badge-pill badge-light px-3 py-2 text-primary shadow-sm">
@@ -34,7 +35,7 @@
                 </div>
                 <div class="db-info">
                     <h6 class="text-muted mb-1">Total Étudiants</h6>
-                    <h3 class="font-weight-bold mb-0">450</h3>
+                    <h3 class="font-weight-bold mb-0">{{ student_count }}</h3>
                     <div class="progress progress-sm mt-3" style="height: 6px;">
                         <div class="progress-bar bg-primary" style="width: 70%"></div>
                     </div>
@@ -51,7 +52,7 @@
                 </div>
                 <div class="db-info">
                     <h6 class="text-muted mb-1">Enseignants</h6>
-                    <h3 class="font-weight-bold mb-0">35</h3>
+                    <h3 class="font-weight-bold mb-0">{{ teacher_count }}</h3>
                     <div class="progress progress-sm mt-3" style="height: 6px;">
                         <div class="progress-bar bg-warning" style="width: 50%"></div>
                     </div>
@@ -68,7 +69,7 @@
                 </div>
                 <div class="db-info">
                     <h6 class="text-muted mb-1">Départements</h6>
-                    <h3 class="font-weight-bold mb-0">8</h3>
+                    <h3 class="font-weight-bold mb-0">{{ department_count }}</h3>
                     <div class="progress progress-sm mt-3" style="height: 6px;">
                         <div class="progress-bar bg-success" style="width: 85%"></div>
                     </div>
@@ -79,6 +80,26 @@
     {% endif %}
 </div>
 
+{% if user.is_superuser %}
+<!-- Gender Distribution Chart Section -->
+<div class="row">
+    <div class="col-md-12 col-lg-6 mb-4">
+        <div class="card premium-card h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="card-title mb-0 font-weight-bold">
+                    <i class="fas fa-chart-pie mr-2 text-primary"></i>{{ gender_distribution }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px; position: relative;">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- Recent Activity / Welcome Info -->
 <div class="row">
     <div class="col-md-12">
@@ -88,7 +109,7 @@
                     <div class="col-lg-12">
                         <div class="glass-container p-4 rounded-lg" style="background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(5px); border-radius: 15px;">
                             <h3 class="font-weight-bold mb-3">
-                                Ravi de vous revoir, <span class="text-primary">{{ user.username|capfirst }}</span> !
+                                Ravi de vous revoir, <span class="text-primary">{% if user.teacher_profile %}{{ user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}{% else %}{{ user.username|capfirst }}{% endif %}</span> !
                             </h3>
                             <p class="text-muted mb-0">
                                 Explorez vos outils de gestion de campus. Gérez les absences, les notes et les emplois du temps en quelques clics.
@@ -100,4 +121,48 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (document.getElementById('genderChart')) {
+            var ctx = document.getElementById('genderChart').getContext('2d');
+            var genderChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['{{ boys }}', '{{ girls }}'],
+                    datasets: [{
+                        label: '{{ students }}',
+                        data: [{{ male_students }}, {{ female_students }}],
+                        backgroundColor: [
+                            'rgba(61, 94, 225, 0.85)',
+                            'rgba(254, 19, 148, 0.85)'
+                        ],
+                        borderColor: [
+                            '#3d5ee1',
+                            '#fe1394'
+                        ],
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
