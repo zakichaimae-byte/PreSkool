@@ -4,7 +4,7 @@ from home_auth import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+    path('student/', include('student.urls')),
     path('faculty/', include('faculty.urls')),
     path('', include('home_auth.urls')),
     path('dashboard/', views.dashboard_view, name='dashboard'),
