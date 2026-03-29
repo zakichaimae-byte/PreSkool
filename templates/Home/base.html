@@ -1,150 +1,232 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
 <html lang="fr">
-   <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-      <title>OmniLog - Dashboard</title>
-      <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
-      <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
-      <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
-      <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
-      <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
-   </head>
-   <body>
-      <div class="main-wrapper">
-         <div class="header">
-            <div class="header-left">
-               <a href="{% url 'dashboard' %}" class="logo">
-                  <img src="{% static 'assets/img/logo.png' %}" alt="Logo">
-               </a>
-            </div>
-            <a href="javascript:void(0);" id="toggle_btn">
-               <i class="fas fa-align-left"></i>
+
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+   <title>PreSkool - Dashboard</title>
+   <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
+   <link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;1,400&amp;display=swap">
+   <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/fontawesome.min.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/css/premium_dashboard.css' %}">
+</head>
+
+<body>
+   <div class="main-wrapper">
+      <div class="header">
+         <div class="header-left">
+            <a href="{% url 'dashboard' %}" class="logo">
+               <img src="{% static 'assets/img/logo.png' %}" alt="Logo">
             </a>
-            
-            <ul class="nav user-menu">
-               <li class="nav-item dropdown has-arrow">
-                  <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                     <span class="user-img">
-                        {# --- PHOTO DYNAMIQUE DANS LE HEADER --- #}
-                        {% if user.is_authenticated and user.profile.avatar %}
-                           <img class="rounded-circle" src="{{ user.profile.avatar.url }}" width="31" alt="{{ user.username }}">
-                        {% else %}
-                           <img class="rounded-circle" src="{% static 'assets/img/profiles/avatar-01.jpg' %}" width="31" alt="Défaut">
-                        {% endif %}
-                     </span>
-                  </a>
-                  <div class="dropdown-menu dropdown-menu-right shadow border-0">
-                     <div class="user-header">
-                        <div class="avatar avatar-sm">
-                           {# --- PHOTO DYNAMIQUE DANS LE DROPDOWN --- #}
-                           {% if user.is_authenticated and user.profile.avatar %}
-                              <img src="{{ user.profile.avatar.url }}" alt="User Image" class="avatar-img rounded-circle">
-                           {% else %}
-                              <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="User Image" class="avatar-img rounded-circle">
-                           {% endif %}
-                        </div>
-                        <div class="user-text ml-3">
-                           <h6 class="font-weight-bold mb-0 text-capitalize">{{ user.username }}</h6>
-                           <p class="text-muted mb-0 small">
-                              {% if user.is_superuser %} Administrateur
-                              {% elif user.groups.all.0.name == "Enseignant" %} Enseignant
-                              {% else %} Étudiant {% endif %}
-                           </p>
-                        </div>
-                     </div>
-                     <a class="dropdown-item mt-2" href="#"><i class="fas fa-user-circle mr-2"></i> Mon Profil</a>
-                     <div class="dropdown-divider"></div>
-                     <a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt mr-2"></i> Déconnexion</a>
-                  </div>
-               </li>
-            </ul>
          </div>
+         <a href="javascript:void(0);" id="toggle_btn">
+            <i class="fas fa-align-left"></i>
+         </a>
 
-         <div class="sidebar" id="sidebar">
-            <div class="sidebar-inner slimscroll">
-               <div id="sidebar-menu" class="sidebar-menu">
-                  <ul>
-                     <li class="menu-title"><span>Menu Principal</span></li>
-                     <li class="active">
-                        <a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> <span>Tableau de bord</span></a>
-                     </li>
+         <ul class="nav user-menu">
+            <li class="nav-item dropdown has-arrow">
+               <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                  <i class="fas fa-globe mr-1"></i> Langue
+               </a>
+               <div class="dropdown-menu dropdown-menu-right shadow border-0">
+                  <form action="{% url 'set_language' %}" method="post">
+                     {% csrf_token %}
+                     <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                     <button type="submit" name="language" value="fr" class="dropdown-item">Français</button>
+                     <button type="submit" name="language" value="en" class="dropdown-item">English</button>
+                     <button type="submit" name="language" value="ar" class="dropdown-item">العربية</button>
+                  </form>
+               </div>
+            </li>
+            <li class="nav-item dropdown has-arrow">
+               <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+                  <span class="user-img">
+                     {% if user.is_authenticated and user.profile.avatar %}
+                     <img class="rounded-circle" src="{{ user.profile.avatar.url }}" width="31"
+                        alt="{% if user.teacher_profile %}{{ user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}{% else %}{{ user.username }}{% endif %}">
+                     {% else %}
+                     <img class="rounded-circle" src="{% static 'assets/img/profiles/avatar-01.jpg' %}" width="31"
+                        alt="Défaut">
+                     {% endif %}
+                  </span>
+               </a>
+               <div class="dropdown-menu dropdown-menu-right shadow border-0">
+                  <div class="user-header">
+                     <div class="avatar avatar-sm">
+                        {% if user.is_authenticated and user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}" alt="User Image" class="avatar-img rounded-circle">
+                        {% else %}
+                        <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="User Image"
+                           class="avatar-img rounded-circle">
+                        {% endif %}
+                     </div>
+                     <div class="user-text ml-3">
+                        <h6 class="font-weight-bold mb-0 text-capitalize">{% if user.teacher_profile %}{{
+                           user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}{% else %}{{
+                           user.username }}{% endif %}</h6>
+                        <p class="text-muted mb-0 small">
+                           {% if user.is_superuser %} Administrateur
+                           {% elif user.groups.all.0.name == "Enseignant" %} Enseignant
+                           {% else %} Étudiant {% endif %}
+                        </p>
+                     </div>
+                  </div>
+                  <a class="dropdown-item mt-2" href="#"><i class="fas fa-user-circle mr-2"></i> Mon Profil</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
+                        class="fas fa-sign-out-alt mr-2"></i> Déconnexion</a>
+               </div>
+            </li>
+         </ul>
+      </div>
 
-                     {# --- LOGIQUE DE MENU PAR RÔLE --- #}
-                     {% if user.is_superuser %}
+      <div class="sidebar" id="sidebar">
+         <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+               <ul>
+                  <li class="menu-title"><span>{{ menu_principal }}</span></li>
+                  <li class="active">
+                     <a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> <span>Tableau de bord</span></a>
+                  </li>
+
+                  {# --- LOGIQUE DE MENU PAR RÔLE --- #}
+                  {% if user.is_superuser %}
+                  <li class="menu-title"><span>{{ administration }}</span></li>
+                  <li class="submenu">
+                     <a href="#"><i class="fas fa-user-graduate"></i> <span> {{ txt_students }}</span> <span
+                           class="menu-arrow"></span></a>
+                     <ul>
+                        <li><a href="{% url 'student_list' %}">{{ txt_students }}</a></li>
+                        <li><a href="{% url 'student_add' %}">{% trans "Ajouter un étudiant" %}</a></li>
+                     </ul>
+                  </li>
+                  <li class="submenu">
+                     <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> {{ txt_teachers }}</span> <span
+                           class="menu-arrow"></span></a>
+                     <ul>
+                        <li><a href="{% url 'teacher_list' %}">{{ txt_teachers }}</a></li>
+                        <li><a href="{% url 'teacher_add' %}">{% trans "Ajouter un enseignant" %}</a></li>
+                     </ul>
+                  </li>
+                  <li class="submenu">
+                     <a href="#"><i class="fas fa-building"></i> <span> {{ txt_departments }}</span> <span
+                           class="menu-arrow"></span></a>
+                     <ul>
+                        <li><a href="{% url 'department_list' %}">{{ txt_departments }}</a></li>
+                        <li><a href="{% url 'department_add' %}">{% trans "Ajouter un département" %}</a></li>
+                     </ul>
+                  </li>
+                  <li class="submenu">
+                     <a href="#"><i class="fas fa-book-reader"></i> <span> {{ txt_subjects }}</span> <span
+                           class="menu-arrow"></span></a>
+                     <ul>
+                        <li><a href="{% url 'subject_list' %}">Liste des matières</a></li>
+                        <li><a href="{% url 'subject_add' %}">Ajouter une matière</a></li>
+                     </ul>
+                  </li>
+                  <li class="menu-title"><span>{{ academic_management }}</span></li>
+                  <li><a href="{% url 'exam_list' %}"><i class="fas fa-clipboard-list"></i> <span>Examens</span></a>
+                  </li>
+                  <li><a href="{% url 'holiday_list' %}"><i class="fas fa-calendar-check"></i> <span>Vacances</span></a>
+                  </li>
+                  <li><a href="{% url 'fee_list' %}"><i class="fas fa-file-invoice-dollar"></i> <span>Frais</span></a>
+                  </li>
+                  <li><a href="{% url 'event_list' %}"><i class="fas fa-calendar-day"></i> <span>Évènements</span></a>
+                  </li>
+                  <li><a href="{% url 'timetable_list' %}"><i class="fas fa-table"></i> <span>Emploi du temps</span></a>
+                  </li>
+                  <li><a href="{% url 'book_list' %}"><i class="fas fa-book"></i> <span>Bibliothèque</span></a></li>
+                  
+                  {# --- FIN DE LA SECTION ADMIN --- #}
+                  {% endif %}
+
+                  {% if user.is_superuser %}
                         <li class="menu-title"><span>Administration</span></li>
                         <li class="submenu">
                            <a href="#"><i class="fas fa-user-graduate"></i> <span> Étudiants</span> <span class="menu-arrow"></span></a>
                            <ul>
                               <li><a href="{% url 'student_list' %}">Liste des étudiants</a></li>
-                              <li><a href="{% url 'add_student' %}">Ajouter un étudiant</a></li>
+                              <li><a href="{% url 'student_add' %}">Ajouter un étudiant</a></li>
                            </ul>
                         </li>
                         <li class="submenu">
                            <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Enseignants</span> <span class="menu-arrow"></span></a>
                            <ul>
-                              <li><a href="">Liste des enseignants</a></li>
-                              <li><a href="">Ajouter un enseignant</a></li>
+                              <li><a href="{% url 'teacher_list' %}">Liste des enseignants</a></li>
+                              <li><a href="{% url 'teacher_add' %}">Ajouter un enseignant</a></li>
                            </ul>
                         </li>
                         <li class="submenu">
                            <a href="#"><i class="fas fa-building"></i> <span> Départements</span> <span class="menu-arrow"></span></a>
                            <ul>
-                              <li><a href="">Liste des départements</a></li>
-                              <li><a href="">Ajouter un département</a></li>
+                              <li><a href="{% url 'department_list' %}">Liste des départements</a></li>
+                              <li><a href="{% url 'department_add' %}">Ajouter un département</a></li>
                            </ul>
                         </li>
                         <li><a href=""><i class="fas fa-file-invoice-dollar"></i> <span>Comptabilité</span></a></li>
+                  {% endif %}
 
-                     {% elif user.groups.all.0.name == "Enseignant" %}
-                        <li class="menu-title"><span>Espace Enseignant</span></li>
-                        <li><a href=""><i class="fas fa-users"></i> <span>Mes Classes</span></a></li>
-                        <li><a href=""><i class="fas fa-file-signature"></i> <span>Saisir les Notes</span></a></li>
-                        <li><a href=""><i class="fas fa-clipboard-check"></i> <span>Présences</span></a></li>
+                  {% if user.groups.all.0.name == "Enseignant" %}
+                  <li class="menu-title"><span>Espace Enseignant</span></li>
+                  <li><a href="{% url 'my_classes' %}"><i class="fas fa-users"></i> <span>Mes Classes</span></a></li>
+                  <li><a href="{% url 'grade_entry' %}"><i class="fas fa-file-signature"></i> <span>Saisir les
+                           Notes</span></a></li>
+                  <li><a href="{% url 'attendance' %}"><i class="fas fa-clipboard-check"></i> <span>Présences</span></a>
+                  </li>
 
-                     {% else %}
-                        <li class="menu-title"><span>Espace Étudiant</span></li>
-                        <li><a href=""><i class="fas fa-book-reader"></i> <span>Mes Cours</span></a></li>
-                        <li><a href=""><i class="fas fa-calendar-alt"></i> <span>Emploi du temps</span></a></li>
-                        <li><a href=""><i class="fas fa-clipboard-list"></i> <span>Mes Examens</span></a></li>
-                     {% endif %}
+                  {% elif not user.is_superuser and user.groups.all.0.name != "Enseignant" %}
+                  <li class="menu-title"><span>Espace Étudiant</span></li>
+                  <li><a href=""><i class="fas fa-book-reader"></i> <span>Mes Cours</span></a></li>
+                  <li><a href=""><i class="fas fa-calendar-alt"></i> <span>Emploi du temps</span></a></li>
+                  <li><a href=""><i class="fas fa-clipboard-list"></i> <span>Mes Examens</span></a></li>
+                  {% endif %}
 
-                     <li class="menu-title"><span>Paramètres</span></li>
-                     <li>
-                        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span></a>
-                     </li>
-                  </ul>
-               </div>
-            </div>
-         </div>
-
-         <div class="page-wrapper">
-            <div class="content container-fluid">
-               {% if messages %}
-                  {% for message in messages %}
-                     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                           <span aria-hidden="true">&times;</span>
-                        </button>
-                     </div>
-                  {% endfor %}
-               {% endif %}
-
-               {% block body %}
-               {% endblock %}
+                  <li class="menu-title"><span>{{ settings }}</span></li>
+                  <li>
+                     <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> <span>{{ logout }}</span></a>
+                  </li>
+               </ul>
             </div>
          </div>
       </div>
 
-      {# --- SCRIPTS CDN POUR L'INTERACTIVITÉ --- #}
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
-      <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
-      <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-      <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
-      <script src="{% static 'assets/js/script.js' %}"></script>
-   </body>
+      <div class="page-wrapper">
+         <div class="content container-fluid">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+               {{ message }}
+               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            {% block body %}
+            {% endblock %}
+         </div>
+      </div>
+   </div>
+
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+      crossorigin="anonymous"></script>
+   <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+   <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+   <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+   <script src="{% static 'assets/js/script.js' %}"></script>
+   {% block scripts %}
+   {% endblock %}
+</body>
+
 </html>

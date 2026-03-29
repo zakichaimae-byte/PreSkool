@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>PreSkool - Excellence Académique</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
+    
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/premium_landing.css' %}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img src="{% static 'assets/img/logo.png' %}" alt="PreSkool Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link" href="#features">Fonctionnalités</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
+                    <li class="nav-item">
+                        <a class="btn btn-premium btn-sm ml-lg-3 mt-2 mt-lg-0" href="{% url 'signup' %}">S'inscrire</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container">
+            <h1 class="animate">Gérez Votre École avec Excellence</h1>
+            <p class="animate" style="animation-delay: 0.2s;">PreSkool est la plateforme tout-en-un pour les parents, enseignants et administrateurs. Modernisez votre gestion académique dès aujourd'hui.</p>
+            <div class="animate" style="animation-delay: 0.4s;">
+                <a href="{% url 'signup' %}" class="btn btn-premium mr-3">Commencer Maintenant</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-premium" style="background:transparent; border: 2px solid white;">Se Connecter</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="font-weight-bold">Pourquoi Choisir PreSkool ?</h2>
+                    <p class="text-muted">Des outils puissants pour une éducation de qualité.</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon"><i class="fas fa-user-graduate"></i></div>
+                        <h4>Suivi des Étudiants</h4>
+                        <p>Visualisez les progrès, les absences et les résultats en temps réel.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <h4>Espace Enseignant</h4>
+                        <p>Gérez vos cours, devoirs et évaluations en quelques clics.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
+                        <h4>Emploi du Temps</h4>
+                        <p>Une organisation fluide pour ne jamais rater un cours important.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{% static 'assets/img/logo-white.png' %}" alt="Logo" height="40" class="mb-3">
+                    <p>La solution moderne pour la gestion d'établissements scolaires.</p>
+                </div>
+                <div class="col-md-6 text-md-right">
+                    <p>&copy; 2026 PreSkool. Tous droits réservés.</p>
+                    <div class="social-links">
+                        <a href="#" class="text-white mr-3"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white mr-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
+    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/script.js' %}"></script>
+</body>
+</html>

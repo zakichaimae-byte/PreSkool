@@ -1,0 +1,87 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Ajouter à l'Emploi du temps</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Emploi du temps</a></li>
+                <li class="breadcrumb-item active">Ajouter</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Classe</label>
+                                <input type="text" name="class_name" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Matière</label>
+                                <select name="subject" class="form-control" required>
+                                    <option value="">Sélectionner une matière</option>
+                                    {% for subject in subjects %}
+                                    <option value="{{ subject.id }}">{{ subject.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Enseignant</label>
+                                <select name="teacher" class="form-control" required>
+                                    <option value="">Sélectionner un enseignant</option>
+                                    {% for teacher in teachers %}
+                                    <option value="{{ teacher.id }}">{{ teacher.first_name }} {{ teacher.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Jour de la semaine</label>
+                                <select name="day_of_week" class="form-control" required>
+                                    <option value="Monday">Lundi</option>
+                                    <option value="Tuesday">Mardi</option>
+                                    <option value="Wednesday">Mercredi</option>
+                                    <option value="Thursday">Jeudi</option>
+                                    <option value="Friday">Vendredi</option>
+                                    <option value="Saturday">Samedi</option>
+                                    <option value="Sunday">Dimanche</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Heure de début</label>
+                                <input type="time" name="start_time" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Heure de fin</label>
+                                <input type="time" name="end_time" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,63 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PreSkool\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-27 23:24+0000\n"
+"PO-Revision-Date: 2026-03-27 23:24+0000\n"
+"Last-Translator: Antigravity\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Menu Principal"
+msgstr "Main Menu"
+
+msgid "Tableau de bord"
+msgstr "Dashboard"
+
+msgid "Administration"
+msgstr "Administration"
+
+msgid "Étudiants"
+msgstr "Students"
+
+msgid "Liste des étudiants"
+msgstr "Student List"
+
+msgid "Ajouter un étudiant"
+msgstr "Add Student"
+
+msgid "Enseignants"
+msgstr "Teachers"
+
+msgid "Liste des enseignants"
+msgstr "Teacher List"
+
+msgid "Ajouter un enseignant"
+msgstr "Add Teacher"
+
+msgid "Départements"
+msgstr "Departments"
+
+msgid "Liste des départements"
+msgstr "Department List"
+
+msgid "Ajouter un département"
+msgstr "Add Department"
+
+msgid "Bienvenue sur"
+msgstr "Welcome to"
+
+msgid "Tableau de bord de gestion scolaire intelligent et moderne."
+msgstr "Intelligent and modern school management dashboard."
+
+msgid "Répartition par Genre"
+msgstr "Gender Distribution"
+
+msgid "Paramètres"
+msgstr "Settings"
+
+msgid "Déconnexion"
+msgstr "Logout"
