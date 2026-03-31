@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database (Pour que chacun garde sa propre base locale)
+db.sqlite3
+
+# Django secret files
+.env
+local_settings.py
+
+# Media and Static
+/media/
+/static/
+/staticfiles/
+
+# VS Code and OS
+.vscode/
+.DS_Store
