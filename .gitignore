@@ -12,7 +12,6 @@ local_settings.py
 
 # Media and Static
 /media/
-/static/
 /staticfiles/
 
 # VS Code and OS
