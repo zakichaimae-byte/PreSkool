@@ -42,7 +42,7 @@ L'application repose sur des technologies de pointe garantissant stabilité et p
 
 1.  **Récupération du Code** :
     ```bash
-    git clone [url-du-repo]
+    git clone https://github.com/zakichaimae-byte/PreSkool.git
     cd PreSkool
     ```
 
