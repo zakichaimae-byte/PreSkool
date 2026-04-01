@@ -42,10 +42,6 @@
                             <div class="form-group">
                                 <label>Jour de la semaine</label>
                                 <select name="day_of_week" class="form-control" required>
-                                    {% with days="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" %}
-                                    {% for day in days.split|join:","|slice:":-1"|default:days|add:","|slice:":-1"|default:days|make_list|default:days|default:days %}
-                                    {# Django template dummy way to loop over a list #}
-                                    {% endwith %}
                                     <option value="Monday" {% if entry.day_of_week == 'Monday' %}selected{% endif %}>Lundi</option>
                                     <option value="Tuesday" {% if entry.day_of_week == 'Tuesday' %}selected{% endif %}>Mardi</option>
                                     <option value="Wednesday" {% if entry.day_of_week == 'Wednesday' %}selected{% endif %}>Mercredi</option>
