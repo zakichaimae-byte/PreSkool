@@ -42,7 +42,7 @@ L'application repose sur des technologies de pointe garantissant stabilité et p
 
 1.  **Récupération du Code** :
     ```bash
-    git clone https://github.com/zakichaimae-byte/PreSkool.git
+    git clone [url-du-repo]
     cd PreSkool
     ```
 
@@ -63,6 +63,17 @@ L'application repose sur des technologies de pointe garantissant stabilité et p
     ```bash
     python manage.py runserver
     ```
+
+---
+
+## 🔑 Comptes de Test
+Pour explorer l'application, vous pouvez utiliser les comptes suivants :
+
+| Rôle | Nom d'utilisateur | Mot de passe |
+| :--- | :--- | :--- |
+| **Administrateur** | `admin` | `admin123` |
+| **Étudiant (Sara Bennis)** | `sara_bennis` | `sara123` |
+| **Enseignant** | `prof_test` | `prof123` |
 
 ---
 
