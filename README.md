@@ -69,9 +69,9 @@ L'application repose sur des technologies de pointe garantissant stabilité et p
 ## 👥 Équipe de Développement
 Projet réalisé avec passion et rigueur par l'équipe d'étudiants suivante (ordre alphabétique) :
 
--   🥇 **Jaaouani Alae**
--   🥈 **Oualili Chaymaa**
--   🥉 **Zaki Chaimae**
+-    **Jaaouani Alae**
+-    **Oualili Chaymaa**
+-    **Zaki Chaimae**
 
 ---
 <p align="center">
