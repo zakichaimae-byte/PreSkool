@@ -71,9 +71,9 @@ Pour explorer l'application, vous pouvez utiliser les comptes suivants :
 
 | Rôle | Nom d'utilisateur | Mot de passe |
 | :--- | :--- | :--- |
-| **Administrateur** | `admin` | `admin123` |
-| **Étudiant (Sara Bennis)** | `sara_bennis` | `sara123` |
-| **Enseignant** | `prof_test` | `prof123` |
+| **Administrateur (Jaaouani Alae)** | `admin` | `admin123` |
+| **Étudiante (Chaymaa Oualili)** | `chaymaa_oualili` | `sara123` |
+| **Enseignant (Chaimae Zaki)** | `prof_test` | `prof123` |
 
 ---
 
