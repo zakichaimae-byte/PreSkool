@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'departments',
     'subjects',
     'academic',
-    'students',
     'fees',
     'events',
     'library',

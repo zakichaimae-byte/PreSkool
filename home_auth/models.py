@@ -20,3 +20,22 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+class Notification(models.Model):
+    CATEGORY_CHOICES = [
+        ('contact', 'Formulaire de Contact'),
+        ('system', 'Système'),
+        ('payment', 'Paiement'),
+        ('student', 'Nouvel Étudiant'),
+    ]
+
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='system')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications', null=True, blank=True)
+    link = models.CharField(max_length=255, blank=True, null=True)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.created_at})"

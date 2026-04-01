@@ -45,26 +45,45 @@ def timetable_list(request):
 
 def timetable_add(request):
     subjects = Subject.objects.all()
-    teachers = Teacher.objects.all()
     if request.method == 'POST':
         class_name = request.POST.get('class_name')
         subject_id = request.POST.get('subject')
-        teacher_id = request.POST.get('teacher')
         day_of_week = request.POST.get('day_of_week')
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
         
         subject = get_object_or_404(Subject, pk=subject_id)
-        teacher = get_object_or_404(Teacher, pk=teacher_id)
         
         TimeTable.objects.create(
             class_name=class_name,
             subject=subject,
-            teacher=teacher,
             day_of_week=day_of_week,
             start_time=start_time,
             end_time=end_time
         )
+        messages.success(request, "Créneau ajouté à l'emploi du temps.")
+        return redirect('timetable_list')
+    return render(request, 'academic/timetable_add.html', {'subjects': subjects})
+
+def timetable_edit(request, pk):
+    entry = get_object_or_404(TimeTable, pk=pk)
+    subjects = Subject.objects.all()
+    if request.method == 'POST':
+        entry.class_name = request.POST.get('class_name')
+        subject_id = request.POST.get('subject')
+        entry.day_of_week = request.POST.get('day_of_week')
+        entry.start_time = request.POST.get('start_time')
+        entry.end_time = request.POST.get('end_time')
+        
+        entry.subject = get_object_or_404(Subject, pk=subject_id)
+        entry.save()
+        
         messages.success(request, "Emploi du temps mis à jour.")
         return redirect('timetable_list')
-    return render(request, 'academic/timetable_add.html', {'subjects': subjects, 'teachers': teachers})
+    return render(request, 'academic/timetable_edit.html', {'entry': entry, 'subjects': subjects})
+
+def timetable_delete(request, pk):
+    entry = get_object_or_404(TimeTable, pk=pk)
+    entry.delete()
+    messages.success(request, "Créneau supprimé.")
+    return redirect('timetable_list')

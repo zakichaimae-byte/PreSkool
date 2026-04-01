@@ -12,7 +12,7 @@
             </ul>
         </div>
         <div class="col-auto text-right float-right ml-auto">
-            <a href="{% url 'student_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+            <a href="{% url 'add_student' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
         </div>
     </div>
 </div>
@@ -43,10 +43,10 @@
                                 <td>{{ student.mobile_number|default:"-" }}</td>
                                 <td class="text-right">
                                     <div class="actions">
-                                        <a href="{% url 'student_edit' student.pk %}" class="btn btn-sm bg-success-light mr-2">
+                                        <a href="{% url 'edit_student' student.student_id %}" class="btn btn-sm bg-success-light mr-2">
                                             <i class="fas fa-pen"></i>
                                         </a>
-                                        <a href="{% url 'student_delete' student.pk %}" class="btn btn-sm bg-danger-light">
+                                        <a href="{% url 'delete_student' student.student_id %}" class="btn btn-sm bg-danger-light">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
