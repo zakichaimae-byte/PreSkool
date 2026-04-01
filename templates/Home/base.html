@@ -108,7 +108,8 @@
             </li>
             {% endif %}
 
-            <li class="nav-item dropdown has-arrow">
+            {% if user.is_superuser %}
+            <li class="nav-item dropdown noti-dropdown">
                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                   <i class="fas fa-globe mr-1"></i> Langue
                </a>
@@ -122,6 +123,7 @@
                   </form>
                </div>
             </li>
+            {% endif %}
             <li class="nav-item dropdown has-arrow">
                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-haspopup="true"
                   aria-expanded="false">
@@ -265,13 +267,12 @@
    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
    <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
    <script src="{% static 'assets/js/script.js' %}"></script>
-
    <script>
-      $(document).ready(function() {
-         var $track  = $('#dm-track');
-         var $thumb  = $('#dm-thumb');
-         var $sun    = $('#dm-icon-sun');
-         var $moon   = $('#dm-icon-moon');
+      $(document).ready(function () {
+         var $track = $('#dm-track');
+         var $thumb = $('#dm-thumb');
+         var $sun = $('#dm-icon-sun');
+         var $moon = $('#dm-icon-moon');
 
          function applyDarkUI() {
             $track.css('background', 'linear-gradient(135deg, #8b5cf6, #6366f1)');

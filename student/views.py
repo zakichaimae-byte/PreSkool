@@ -35,16 +35,16 @@ def add_student(request):
 
             # 1. Création du parent en premier
             parent = Parent.objects.create(
-                father_name=father_name,
-                father_occupation=father_occupation,
-                father_mobile=father_mobile,
-                father_email=father_email,
-                mother_name=mother_name,
-                mother_occupation=mother_occupation,
-                mother_mobile=mother_mobile,
-                mother_email=mother_email,
-                present_address=present_address,
-                permanent_address=permanent_address
+                father_name=father_name or '',
+                father_occupation=father_occupation or '',
+                father_mobile=father_mobile or '',
+                father_email=father_email or '',
+                mother_name=mother_name or '',
+                mother_occupation=mother_occupation or '',
+                mother_mobile=mother_mobile or '',
+                mother_email=mother_email or '',
+                present_address=present_address or '',
+                permanent_address=permanent_address or ''
             )
 
             # 2. Création de l'étudiant (maintenant le 'parent' existe !)
@@ -109,19 +109,19 @@ def edit_student(request, student_id):
 
         student.save() # On sauvegarde l'étudiant
 
-        # On met à jour les infos du parent
-        parent.father_name = request.POST.get('father_name')
-        parent.father_occupation = request.POST.get('father_occupation')
-        parent.father_mobile = request.POST.get('father_mobile')
-        parent.father_email = request.POST.get('father_email')
+        # On met à jour les infos du parent (uniquement si présentes dans POST)
+        if request.POST.get('father_name'): parent.father_name = request.POST.get('father_name')
+        if request.POST.get('father_occupation'): parent.father_occupation = request.POST.get('father_occupation')
+        if request.POST.get('father_mobile'): parent.father_mobile = request.POST.get('father_mobile')
+        if request.POST.get('father_email'): parent.father_email = request.POST.get('father_email')
         
-        parent.mother_name = request.POST.get('mother_name')
-        parent.mother_occupation = request.POST.get('mother_occupation')
-        parent.mother_mobile = request.POST.get('mother_mobile')
-        parent.mother_email = request.POST.get('mother_email')
+        if request.POST.get('mother_name'): parent.mother_name = request.POST.get('mother_name')
+        if request.POST.get('mother_occupation'): parent.mother_occupation = request.POST.get('mother_occupation')
+        if request.POST.get('mother_mobile'): parent.mother_mobile = request.POST.get('mother_mobile')
+        if request.POST.get('mother_email'): parent.mother_email = request.POST.get('mother_email')
         
-        parent.present_address = request.POST.get('present_address')
-        parent.permanent_address = request.POST.get('permanent_address')
+        if request.POST.get('present_address'): parent.present_address = request.POST.get('present_address')
+        if request.POST.get('permanent_address'): parent.permanent_address = request.POST.get('permanent_address')
 
         parent.save() # On sauvegarde le parent
 

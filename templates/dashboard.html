@@ -574,4 +574,147 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 
 {% endif %}
+
+{% if role == 'teacher' %}
+<!-- ═══════════════════════════════════════════
+     DASHBOARD ENSEIGNANT
+     ════════════════════════════════════════════ -->
+<div class="row">
+    <!-- Mes Matières -->
+    <div class="col-xl-4 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-one">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1">Mes Matières</h6>
+                    <h3 class="font-weight-bold mb-0">{{ my_subjects_count }}</h3>
+                    <p class="text-xs text-muted mt-2">Réparties sur <strong>{{ my_classes_count }}</strong> classes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mes Élèves -->
+    <div class="col-xl-4 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-two">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1">Mes Élèves</h6>
+                    <h3 class="font-weight-bold mb-0">{{ my_students_count }}</h3>
+                    <p class="text-xs text-muted mt-2">Nombre total d'élèves dans vos classes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card premium-card card-stripe-grades">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="section-title">
+                    <i class="fas fa-star"></i> Mes Dernières Notes Saisies
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-scroll-wrapper">
+                    <table class="grade-table">
+                        <thead>
+                            <tr>
+                                <th>Élève</th>
+                                <th>Classe</th>
+                                <th>Matière</th>
+                                <th>Note</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in latest_grades %}
+                            <tr>
+                                <td><strong>{{ grade.student.first_name }} {{ grade.student.last_name }}</strong></td>
+                                <td><span style="font-size:0.85rem; color:#6366f1; font-weight:600;">{{ grade.student.student_class }}</span></td>
+                                <td>{{ grade.subject.name }}</td>
+                                <td><span class="score-badge {% if grade.score >= 10 %}score-good{% else %}score-fail{% endif %}">{{ grade.score }}/20</span></td>
+                                <td style="color:#6b7280;font-size:0.83rem;">{{ grade.date_recorded|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr><td colspan="5" class="text-center text-muted py-5">Aucune note saisie récemment.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if role == 'student' %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card premium-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="font-weight-bold mb-1">Bienvenue, {{ student.first_name }} 👋</h4>
+                        <p class="text-muted mb-0">Voici un aperçu de vos activités pour aujourd'hui.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Stats Étudiant -->
+    <div class="col-xl-4 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2 card-present">
+            <div class="card-body text-white">
+                <h6 class="stat-label">Mes Cours</h6>
+                <h3 class="stat-number">{{ subjects_count }}</h3>
+                <div class="stat-bg-icon"><i class="fas fa-book"></i></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-8 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="section-title"><i class="fas fa-calendar-alt"></i> Emploi du temps du jour ({{ today }})</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Matière</th>
+                                <th>Heure</th>
+                                <th>Salle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in timetables %}
+                            <tr>
+                                <td><strong>{{ schedule.subject.name }}</strong></td>
+                                <td>{{ schedule.start_time }} - {{ schedule.end_time }}</td>
+                                <td><span class="badge badge-soft-primary">Salle {{ schedule.room_number|default:"--" }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Aucun cours aujourd'hui.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

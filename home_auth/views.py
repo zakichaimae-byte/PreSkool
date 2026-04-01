@@ -10,6 +10,7 @@ from departments.models import Department
 from academic.models import Exam, TimeTable
 from subjects.models import Subject
 from .models import Notification
+from teacher_space.models import Attendance, Grade
 from django.db.models import Count
 import json
 import datetime
@@ -108,25 +109,20 @@ def register_view(request):
 def dashboard_view(request):
     notifications = Notification.objects.filter(is_read=False).order_by('-created_at')[:5]
     
-    if request.user.is_superuser or request.user.groups.filter(name='Enseignant').exists():
-        # General Stats
+    if request.user.is_superuser:
+        # ── ADMIN DASHBOARD ──
         student_count = Student.objects.count()
         teacher_count = Teacher.objects.count()
         department_count = Department.objects.count()
         
-        # Departments Chart Data
         departments_data = Department.objects.annotate(num_teachers=Count('teachers'))
         dep_names = json.dumps([dep.name for dep in departments_data])
         dep_counts = json.dumps([dep.num_teachers for dep in departments_data])
         
-        # ── Attendance Stats (today) ──
         today = datetime.date.today()
-        from teacher_space.models import Attendance, Grade
         present_today = Attendance.objects.filter(date=today, status='Present').count()
         absent_today  = Attendance.objects.filter(date=today, status='Absent').count()
         
-        # ── 7-day evolution (last 7 days) ──
-        from django.db.models import Q
         evolution_labels = []
         evolution_present = []
         evolution_absent  = []
@@ -136,10 +132,8 @@ def dashboard_view(request):
             evolution_present.append(Attendance.objects.filter(date=d, status='Present').count())
             evolution_absent.append(Attendance.objects.filter(date=d, status='Absent').count())
         
-        # ── Latest Grades (with optional class/date filters) ──
         selected_class = request.GET.get('filter_class', '')
         selected_date  = request.GET.get('filter_date', '')
-        
         grades_qs = Grade.objects.select_related('student', 'subject').order_by('-date_recorded')
         if selected_class:
             grades_qs = grades_qs.filter(student__student_class=selected_class)
@@ -147,34 +141,49 @@ def dashboard_view(request):
             try:
                 filter_date = datetime.datetime.strptime(selected_date, '%Y-%m-%d').date()
                 grades_qs = grades_qs.filter(date_recorded__date=filter_date)
-            except ValueError:
-                pass
-        latest_grades = grades_qs[:20]
-        
-        # Available classes for filter dropdown
+            except ValueError: pass
+            
         all_classes = Student.objects.values_list('student_class', flat=True).distinct().order_by('student_class')
         
         context = {
+            'role': 'admin',
             'student_count': student_count,
             'teacher_count': teacher_count,
             'department_count': department_count,
             'male_students': Student.objects.filter(gender='Male').count(),
             'female_students': Student.objects.filter(gender='Female').count(),
-            'dep_names': dep_names,
-            'dep_counts': dep_counts,
+            'dep_names': dep_names, 'dep_counts': dep_counts,
             'notifications': notifications,
-            # Attendance
-            'present_today': present_today,
-            'absent_today':  absent_today,
-            # Evolution chart
-            'evolution_labels':  json.dumps(evolution_labels),
+            'present_today': present_today, 'absent_today': absent_today,
+            'evolution_labels': json.dumps(evolution_labels),
             'evolution_present': json.dumps(evolution_present),
-            'evolution_absent':  json.dumps(evolution_absent),
-            # Grades table
+            'evolution_absent': json.dumps(evolution_absent),
+            'latest_grades': grades_qs[:20],
+            'all_classes': all_classes,
+            'selected_class': selected_class, 'selected_date': selected_date,
+        }
+        return render(request, 'dashboard.html', context)
+
+    elif request.user.groups.filter(name='Enseignant').exists():
+        # ── TEACHER DASHBOARD ──
+        teacher = getattr(request.user, 'teacher_profile', None)
+        
+        my_subjects = Subject.objects.filter(teacher=teacher)
+        my_classes = my_subjects.values_list('class_name', flat=True).distinct()
+        my_students_count = Student.objects.filter(student_class__in=my_classes).count()
+        
+        # Latest grades for MY subjects
+        latest_grades = Grade.objects.filter(subject__in=my_subjects).select_related('student', 'subject').order_by('-date_recorded')[:10]
+        
+        context = {
+            'role': 'teacher',
+            'teacher': teacher,
+            'my_subjects': my_subjects,
+            'my_subjects_count': my_subjects.count(),
+            'my_students_count': my_students_count,
+            'my_classes_count': len(my_classes),
             'latest_grades': latest_grades,
-            'all_classes':   all_classes,
-            'selected_class': selected_class,
-            'selected_date':  selected_date,
+            'notifications': notifications,
         }
         return render(request, 'dashboard.html', context)
 
@@ -193,6 +202,7 @@ def dashboard_view(request):
             ).order_by('start_time')
             
             context = {
+                'role': 'student',
                 'student': student_profile,
                 'subjects_count': subjects_count,
                 'timetables': timetables,
