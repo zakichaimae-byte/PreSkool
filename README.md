@@ -1,10 +1,10 @@
 # <p align="center">🎓 PreSkool - Écosystème de Gestion Scolaire Intelligent</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Django-6.0--314-092e20?style=for-the-badge&logo=django" alt="Django">
-  <img src="https://img.shields.io/badge/Python-3.14--463?style=for-the-badge&logo=python&logoColor=FFD43B" alt="Python">
-  <img src="https://img.shields.io/badge/Bootstrap-5.3--5633FF?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap">
-  <img src="https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
+  <img src="https://img.shields.io/badge/Django-6.0-092e20?style=for-the-badge&logo=django" alt="Django">
+  <img src="https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
+  <img src="https://img.shields.io/badge/Bootstrap-5.3-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white" alt="Bootstrap">
+  <img src="https://img.shields.io/badge/SQLite-3.0-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite">
 </p>
 
 ---
