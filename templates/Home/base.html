@@ -15,9 +15,16 @@
    <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
    <link rel="stylesheet" href="{% static 'assets/css/premium_dashboard.css' %}">
+   <link rel="stylesheet" href="{% static 'assets/css/dark-mode.css' %}">
 </head>
 
 <body>
+   <!-- FOUC Prevention Script -->
+   <script>
+      if (localStorage.getItem('theme') === 'dark') {
+         document.body.classList.add('dark-mode');
+      }
+   </script>
    <div class="main-wrapper">
       <div class="header">
          <div class="header-left">
@@ -30,6 +37,77 @@
          </a>
 
          <ul class="nav user-menu">
+            <!-- Dark Mode Toggle -->
+            <li class="nav-item" style="display: flex; align-items: center; padding: 0 10px;">
+               <button id="dark-mode-toggle" title="Basculer le mode sombre" style="
+                  background: none; border: none; cursor: pointer; padding: 6px 10px;
+                  display: flex; align-items: center; gap: 8px; border-radius: 50px;
+                  transition: all 0.3s ease;
+               ">
+                  <!-- Sun icon -->
+                  <span id="dm-icon-sun" style="color: #f59e0b; font-size: 1rem; display: none; filter: drop-shadow(0 0 6px rgba(245,158,11,0.7));">
+                     <i class="fas fa-sun"></i>
+                  </span>
+                  <!-- Moon icon -->
+                  <span id="dm-icon-moon" style="color: #8b9ab0; font-size: 1rem;">
+                     <i class="fas fa-moon"></i>
+                  </span>
+                  <!-- Pill track -->
+                  <span id="dm-track" style="
+                     position: relative; display: inline-block;
+                     width: 42px; height: 22px;
+                     background: #dde1e9;
+                     border-radius: 999px;
+                     transition: background 0.35s ease;
+                     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+                  ">
+                     <span id="dm-thumb" style="
+                        position: absolute; top: 3px; left: 3px;
+                        width: 16px; height: 16px;
+                        background: #fff;
+                        border-radius: 50%;
+                        transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), background 0.35s ease;
+                        box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+                     "></span>
+                  </span>
+               </button>
+            </li>
+
+            {% if user.is_superuser %}
+            <!-- Notifications -->
+            <li class="nav-item dropdown has-arrow">
+               <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
+                  <i class="far fa-bell"></i>
+                  {% if notifications %}
+                  <span class="badge badge-pill badge-danger" style="position: absolute; top: 10px; right: 2px; font-size: 10px; padding: 3px 5px;">{{ notifications.count }}</span>
+                  {% endif %}
+               </a>
+               <div class="dropdown-menu dropdown-menu-right shadow border-0 p-0" style="width: 300px; border-radius: 15px; overflow: hidden;">
+                  <div class="bg-primary p-3 text-white d-flex justify-content-between align-items-center">
+                     <h6 class="mb-0 font-weight-bold">Notifications</h6>
+                     <span class="badge badge-pill badge-light text-primary">{{ notifications.count }} Nouvelles</span>
+                  </div>
+                  <div class="notifications-list" style="max-height: 300px; overflow-y: auto;">
+                     {% for notif in notifications %}
+                     <a href="{% if notif.link %}{{ notif.link }}{% else %}#{% endif %}" class="dropdown-item p-3 border-bottom d-flex align-items-start">
+                        <div class="bg-soft-primary p-2 rounded-circle mr-3">
+                           <i class="fas {% if notif.category == 'contact' %}fa-envelope{% else %}fa-bell{% endif %} text-primary"></i>
+                        </div>
+                        <div style="white-space: normal;">
+                           <p class="mb-0 font-weight-bold text-dark" style="font-size: 13px;">{{ notif.title }}</p>
+                           <p class="mb-0 text-muted small">{{ notif.message|truncatechars:60 }}</p>
+                           <span class="text-xs text-muted">{{ notif.created_at|timesince }}</span>
+                        </div>
+                     </a>
+                     {% empty %}
+                     <div class="p-4 text-center text-muted">Aucune nouvelle notification</div>
+                     {% endfor %}
+                  </div>
+                  <a href="{% url 'notifications' %}" class="dropdown-item text-center p-3 text-primary font-weight-bold small">Voir tout</a>
+               </div>
+            </li>
+            {% endif %}
+
             <li class="nav-item dropdown has-arrow">
                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
                   <i class="fas fa-globe mr-1"></i> Langue
@@ -48,29 +126,18 @@
                <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown" aria-haspopup="true"
                   aria-expanded="false">
                   <span class="user-img">
-                     {% if user.is_authenticated and user.profile.avatar %}
-                     <img class="rounded-circle" src="{{ user.profile.avatar.url }}" width="31"
-                        alt="{% if user.teacher_profile %}{{ user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}{% else %}{{ user.username }}{% endif %}">
-                     {% else %}
-                     <img class="rounded-circle" src="{% static 'assets/img/profiles/avatar-01.jpg' %}" width="31"
-                        alt="Défaut">
-                     {% endif %}
+                     <img class="rounded-circle" src="{% static 'assets/img/profiles/' %}{% if user.username == 'chaymaa_oualili' %}oualili.jpeg{% elif user.username == 'prof_test' %}chaimae.jpeg{% elif user.username == 'admin' %}Jaaouani.jpeg{% elif user.student_profile and user.student_profile.gender == 'Female' %}chaimae.jpeg{% else %}Jaaouani.jpeg{% endif %}" width="31"
+                        alt="{{ user.username }}">
                   </span>
                </a>
                <div class="dropdown-menu dropdown-menu-right shadow border-0">
                   <div class="user-header">
                      <div class="avatar avatar-sm">
-                        {% if user.is_authenticated and user.profile.avatar %}
-                        <img src="{{ user.profile.avatar.url }}" alt="User Image" class="avatar-img rounded-circle">
-                        {% else %}
-                        <img src="{% static 'assets/img/profiles/avatar-01.jpg' %}" alt="User Image"
+                        <img src="{% static 'assets/img/profiles/' %}{% if user.username == 'chaymaa_oualili' %}oualili.jpeg{% elif user.username == 'prof_test' %}chaimae.jpeg{% elif user.username == 'admin' %}Jaaouani.jpeg{% elif user.student_profile and user.student_profile.gender == 'Female' %}chaimae.jpeg{% else %}Jaaouani.jpeg{% endif %}" alt="User Image"
                            class="avatar-img rounded-circle">
-                        {% endif %}
                      </div>
                      <div class="user-text ml-3">
-                        <h6 class="font-weight-bold mb-0 text-capitalize">{% if user.teacher_profile %}{{
-                           user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}{% else %}{{
-                           user.username }}{% endif %}</h6>
+                        <h6 class="font-weight-bold mb-0 text-capitalize">{{ user.username }}</h6>
                         <p class="text-muted mb-0 small">
                            {% if user.is_superuser %} Administrateur
                            {% elif user.groups.all.0.name == "Enseignant" %} Enseignant
@@ -78,7 +145,7 @@
                         </p>
                      </div>
                   </div>
-                  <a class="dropdown-item mt-2" href="#"><i class="fas fa-user-circle mr-2"></i> Mon Profil</a>
+                  <a class="dropdown-item mt-2" href="{% url 'profile' %}"><i class="fas fa-user-circle mr-2"></i> Mon Profil</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item text-danger" href="{% url 'logout' %}"><i
                         class="fas fa-sign-out-alt mr-2"></i> Déconnexion</a>
@@ -93,7 +160,7 @@
                <ul>
                   <li class="menu-title"><span>{{ menu_principal }}</span></li>
                   <li class="active">
-                     <a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> <span>Tableau de bord</span></a>
+                     <a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> <span>{{ dashboard_label }}</span></a>
                   </li>
 
                   {# --- LOGIQUE DE MENU PAR RÔLE --- #}
@@ -103,89 +170,62 @@
                      <a href="#"><i class="fas fa-user-graduate"></i> <span> {{ txt_students }}</span> <span
                            class="menu-arrow"></span></a>
                      <ul>
-                        <li><a href="{% url 'student_list' %}">{{ txt_students }}</a></li>
-                        <li><a href="{% url 'student_add' %}">{% trans "Ajouter un étudiant" %}</a></li>
+                        <li><a href="{% url 'student_list' %}">{{ list_students }}</a></li>
+                        <li><a href="{% url 'add_student' %}">{{ add_student }}</a></li>
                      </ul>
                   </li>
                   <li class="submenu">
                      <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> {{ txt_teachers }}</span> <span
                            class="menu-arrow"></span></a>
                      <ul>
-                        <li><a href="{% url 'teacher_list' %}">{{ txt_teachers }}</a></li>
-                        <li><a href="{% url 'teacher_add' %}">{% trans "Ajouter un enseignant" %}</a></li>
+                        <li><a href="{% url 'teacher_list' %}">{{ list_teachers }}</a></li>
+                        <li><a href="{% url 'teacher_add' %}">{{ add_teacher }}</a></li>
                      </ul>
                   </li>
                   <li class="submenu">
                      <a href="#"><i class="fas fa-building"></i> <span> {{ txt_departments }}</span> <span
                            class="menu-arrow"></span></a>
                      <ul>
-                        <li><a href="{% url 'department_list' %}">{{ txt_departments }}</a></li>
-                        <li><a href="{% url 'department_add' %}">{% trans "Ajouter un département" %}</a></li>
+                        <li><a href="{% url 'department_list' %}">{{ list_departments }}</a></li>
+                        <li><a href="{% url 'department_add' %}">{{ add_department }}</a></li>
                      </ul>
                   </li>
                   <li class="submenu">
                      <a href="#"><i class="fas fa-book-reader"></i> <span> {{ txt_subjects }}</span> <span
                            class="menu-arrow"></span></a>
                      <ul>
-                        <li><a href="{% url 'subject_list' %}">Liste des matières</a></li>
-                        <li><a href="{% url 'subject_add' %}">Ajouter une matière</a></li>
+                        <li><a href="{% url 'subject_list' %}">{{ list_subjects }}</a></li>
+                        <li><a href="{% url 'subject_add' %}">{{ add_subject }}</a></li>
                      </ul>
                   </li>
                   <li class="menu-title"><span>{{ academic_management }}</span></li>
-                  <li><a href="{% url 'exam_list' %}"><i class="fas fa-clipboard-list"></i> <span>Examens</span></a>
+                  <li><a href="{% url 'exam_list' %}"><i class="fas fa-clipboard-list"></i> <span>{{ txt_exams }}</span></a>
                   </li>
-                  <li><a href="{% url 'holiday_list' %}"><i class="fas fa-calendar-check"></i> <span>Vacances</span></a>
+                  <li><a href="{% url 'holiday_list' %}"><i class="fas fa-calendar-check"></i> <span>{{ txt_holidays }}</span></a>
                   </li>
-                  <li><a href="{% url 'fee_list' %}"><i class="fas fa-file-invoice-dollar"></i> <span>Frais</span></a>
+                  <li><a href="{% url 'fee_list' %}"><i class="fas fa-file-invoice-dollar"></i> <span>{{ txt_fees }}</span></a>
                   </li>
-                  <li><a href="{% url 'event_list' %}"><i class="fas fa-calendar-day"></i> <span>Évènements</span></a>
+                  <li><a href="{% url 'event_list' %}"><i class="fas fa-calendar-day"></i> <span>{{ txt_events }}</span></a>
                   </li>
-                  <li><a href="{% url 'timetable_list' %}"><i class="fas fa-table"></i> <span>Emploi du temps</span></a>
+                  <li><a href="{% url 'timetable_list' %}"><i class="fas fa-table"></i> <span>{{ txt_timetable }}</span></a>
                   </li>
-                  <li><a href="{% url 'book_list' %}"><i class="fas fa-book"></i> <span>Bibliothèque</span></a></li>
+                  <li><a href="{% url 'book_list' %}"><i class="fas fa-book"></i> <span>{{ txt_library }}</span></a></li>
                   
                   {# --- FIN DE LA SECTION ADMIN --- #}
                   {% endif %}
 
-                  {% if user.is_superuser %}
-                        <li class="menu-title"><span>Administration</span></li>
-                        <li class="submenu">
-                           <a href="#"><i class="fas fa-user-graduate"></i> <span> Étudiants</span> <span class="menu-arrow"></span></a>
-                           <ul>
-                              <li><a href="{% url 'student_list' %}">Liste des étudiants</a></li>
-                              <li><a href="{% url 'student_add' %}">Ajouter un étudiant</a></li>
-                           </ul>
-                        </li>
-                        <li class="submenu">
-                           <a href="#"><i class="fas fa-chalkboard-teacher"></i> <span> Enseignants</span> <span class="menu-arrow"></span></a>
-                           <ul>
-                              <li><a href="{% url 'teacher_list' %}">Liste des enseignants</a></li>
-                              <li><a href="{% url 'teacher_add' %}">Ajouter un enseignant</a></li>
-                           </ul>
-                        </li>
-                        <li class="submenu">
-                           <a href="#"><i class="fas fa-building"></i> <span> Départements</span> <span class="menu-arrow"></span></a>
-                           <ul>
-                              <li><a href="{% url 'department_list' %}">Liste des départements</a></li>
-                              <li><a href="{% url 'department_add' %}">Ajouter un département</a></li>
-                           </ul>
-                        </li>
-                        <li><a href=""><i class="fas fa-file-invoice-dollar"></i> <span>Comptabilité</span></a></li>
-                  {% endif %}
-
-                  {% if user.groups.all.0.name == "Enseignant" %}
-                  <li class="menu-title"><span>Espace Enseignant</span></li>
-                  <li><a href="{% url 'my_classes' %}"><i class="fas fa-users"></i> <span>Mes Classes</span></a></li>
-                  <li><a href="{% url 'grade_entry' %}"><i class="fas fa-file-signature"></i> <span>Saisir les
-                           Notes</span></a></li>
-                  <li><a href="{% url 'attendance' %}"><i class="fas fa-clipboard-check"></i> <span>Présences</span></a>
+                  {% if user.groups.all.0.name == "Enseignant" and not user.is_superuser %}
+                  <li class="menu-title"><span>{{ teacher_space }}</span></li>
+                  <li><a href="{% url 'my_classes' %}"><i class="fas fa-users"></i> <span>{{ my_classes }}</span></a></li>
+                  <li><a href="{% url 'grade_entry' %}"><i class="fas fa-file-signature"></i> <span>{{ enter_grades }}</span></a></li>
+                  <li><a href="{% url 'attendance' %}"><i class="fas fa-clipboard-check"></i> <span>{{ txt_attendance }}</span></a>
                   </li>
 
                   {% elif not user.is_superuser and user.groups.all.0.name != "Enseignant" %}
-                  <li class="menu-title"><span>Espace Étudiant</span></li>
-                  <li><a href=""><i class="fas fa-book-reader"></i> <span>Mes Cours</span></a></li>
-                  <li><a href=""><i class="fas fa-calendar-alt"></i> <span>Emploi du temps</span></a></li>
-                  <li><a href=""><i class="fas fa-clipboard-list"></i> <span>Mes Examens</span></a></li>
+                  <li class="menu-title"><span>{{ student_space }}</span></li>
+                  <li><a href="{% url 'my_courses_list' %}"><i class="fas fa-book-reader"></i> <span>{{ my_courses }}</span></a></li>
+                  <li><a href="{% url 'student_timetable_full' %}"><i class="fas fa-calendar-alt"></i> <span>{{ txt_timetable }}</span></a></li>
+                  <li><a href="{% url 'student_exams_list' %}"><i class="fas fa-clipboard-list"></i> <span>{{ my_exams }}</span></a></li>
                   {% endif %}
 
                   <li class="menu-title"><span>{{ settings }}</span></li>
@@ -225,6 +265,47 @@
    <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
    <script src="{% static 'assets/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
    <script src="{% static 'assets/js/script.js' %}"></script>
+
+   <script>
+      $(document).ready(function() {
+         var $track  = $('#dm-track');
+         var $thumb  = $('#dm-thumb');
+         var $sun    = $('#dm-icon-sun');
+         var $moon   = $('#dm-icon-moon');
+
+         function applyDarkUI() {
+            $track.css('background', 'linear-gradient(135deg, #8b5cf6, #6366f1)');
+            $thumb.css({'transform': 'translateX(20px)', 'background': '#e9d5ff'});
+            $sun.show();
+            $moon.hide();
+         }
+
+         function applyLightUI() {
+            $track.css('background', '#dde1e9');
+            $thumb.css({'transform': 'translateX(0)', 'background': '#fff'});
+            $sun.hide();
+            $moon.show();
+         }
+
+         // Initialize from storage
+         if (localStorage.getItem('theme') === 'dark') {
+            applyDarkUI();
+         }
+
+         $('#dark-mode-toggle').on('click', function() {
+            $('body').toggleClass('dark-mode');
+            var isDark = $('body').hasClass('dark-mode');
+            if (isDark) {
+               localStorage.setItem('theme', 'dark');
+               applyDarkUI();
+            } else {
+               localStorage.setItem('theme', 'light');
+               applyLightUI();
+            }
+         });
+      });
+   </script>
+
    {% block scripts %}
    {% endblock %}
 </body>

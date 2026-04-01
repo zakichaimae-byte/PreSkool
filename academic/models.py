@@ -22,7 +22,6 @@ class Exam(models.Model):
 class TimeTable(models.Model):
     class_name = models.CharField(max_length=200)
     subject = models.ForeignKey('subjects.Subject', on_delete=models.CASCADE, related_name='timetables')
-    teacher = models.ForeignKey('teachers.Teacher', on_delete=models.CASCADE, related_name='timetables')
     day_of_week = models.CharField(max_length=20, choices=[
         ('Monday', 'Monday'),
         ('Tuesday', 'Tuesday'),

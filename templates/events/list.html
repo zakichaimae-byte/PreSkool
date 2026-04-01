@@ -26,18 +26,34 @@
                         <thead>
                             <tr>
                                 <th>Titre</th>
+                                <th>Type</th>
                                 <th>Date</th>
                                 <th>Horaire</th>
                                 <th>Lieu</th>
+                                <th>Responsable</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for event in events %}
                             <tr>
-                                <td>{{ event.title }}</td>
+                                <td><strong>{{ event.title }}</strong></td>
+                                <td>
+                                    {% if event.event_type == 'Soutenance' %}
+                                        <span class="badge badge-primary">Soutenance</span>
+                                    {% elif event.event_type == 'TP/Atelier' %}
+                                        <span class="badge badge-info">TP / Atelier</span>
+                                    {% elif event.event_type == 'Conférence' %}
+                                        <span class="badge badge-warning">Conférence</span>
+                                    {% elif event.event_type == 'Fête' %}
+                                        <span class="badge badge-success">Fête scolaire</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Autre</span>
+                                    {% endif %}
+                                </td>
                                 <td>{{ event.date }}</td>
                                 <td>{{ event.start_time }} - {{ event.end_time }}</td>
                                 <td>{{ event.location|default:"-" }}</td>
+                                <td>{{ event.responsible|default:"-" }}</td>
                             </tr>
                             {% empty %}
                             <tr>

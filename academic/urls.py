@@ -8,4 +8,6 @@ urlpatterns = [
     path('exams/add/', views.exam_add, name='exam_add'),
     path('timetable/', views.timetable_list, name='timetable_list'),
     path('timetable/add/', views.timetable_add, name='timetable_add'),
+    path('timetable/edit/<int:pk>/', views.timetable_edit, name='timetable_edit'),
+    path('timetable/delete/<int:pk>/', views.timetable_delete, name='timetable_delete'),
 ]

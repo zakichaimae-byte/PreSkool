@@ -68,19 +68,15 @@ def add_student(request):
             return redirect('student_list')
             
     else:
-            # Si ce n'est pas une requête POST, on affiche simplement le formulaire vide
-        return render(request, 'student/add-student.html')
+        return render(request, 'students/add.html')
 
 def student_list(request):
     students = Student.objects.all()
-    return render(request, 'student/students.html', {'students': students})
+    return render(request, 'students/list.html', {'students': students})
 
-def student_details(request, student_id):  # 👈 Ajoute bien "student_id" ici !
-    # On cherche l'étudiant en question
+def student_details(request, student_id):
     student = get_object_or_404(Student, student_id=student_id)
-    
-    # On l'envoie à ton fichier HTML (vérifie que le nom du fichier HTML correspond au tien)
-    return render(request, 'student/student-details.html', {'student': student})
+    return render(request, 'students/list.html', {'student': student}) # Placeholder for details
 
 def edit_student(request, student_id):
     # 1. On récupère l'étudiant et son parent
@@ -131,7 +127,7 @@ def edit_student(request, student_id):
 
     # 3. Si on charge juste la page (méthode GET), on envoie les données pour pré-remplir
     # Remarque comment on envoie 'student' ET 'parent' à ton fichier HTML !
-    return render(request, 'student/edit-student.html', {'student': student, 'parent': parent})
+    return render(request, 'students/edit.html', {'student': student, 'parent': parent})
 
 def delete_student(request, student_id):
     # 1. On cherche l'étudiant avec cet ID spécifique

@@ -8,20 +8,19 @@
     
     <!-- Favicon -->
     <link rel="shortcut icon" href="{% static 'assets/img/favicon.png' %}">
-    
-    <!-- Google Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-    
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}">
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="{% static 'assets/plugins/fontawesome/css/all.min.css' %}">
-    
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'assets/css/premium_landing.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/dark-mode.css' %}">
 </head>
 <body>
+    <!-- FOUC Prevention Script -->
+    <script>
+       if (localStorage.getItem('theme') === 'dark') {
+          document.body.classList.add('dark-mode');
+       }
+    </script>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top">
@@ -34,29 +33,40 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
-                    <li class="nav-item"><a class="nav-link" href="#features">Fonctionnalités</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#features">Pourquoi PreSkool?</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about">À Propos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Connexion</a></li>
                     <li class="nav-item">
                         <a class="btn btn-premium btn-sm ml-lg-3 mt-2 mt-lg-0" href="{% url 'signup' %}">S'inscrire</a>
+                    </li>
+                    <li class="nav-item ml-lg-3 mt-2 mt-lg-0" style="display: flex; align-items: center;">
+                       <button id="dark-mode-toggle" title="Basculer le mode sombre" style="background: none; border: none; cursor: pointer; padding: 6px 0; display: flex; align-items: center; gap: 8px; border-radius: 50px;">
+                          <span id="dm-icon-sun" style="color: #f59e0b; font-size: 1rem; display: none; filter: drop-shadow(0 0 6px rgba(245,158,11,0.7));"><i class="fas fa-sun"></i></span>
+                          <span id="dm-icon-moon" style="color: #8b9ab0; font-size: 1rem;"><i class="fas fa-moon"></i></span>
+                          <span id="dm-track" style="position: relative; display: inline-block; width: 42px; height: 22px; background: #dde1e9; border-radius: 999px; transition: background 0.35s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);">
+                             <span id="dm-thumb" style="position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), background 0.35s ease; box-shadow: 0 1px 4px rgba(0,0,0,0.25);"></span>
+                          </span>
+                       </button>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
+    <!-- SECTION 1: HERO -->
     <header class="hero">
-        <div class="container">
+        <div class="container py-5">
             <h1 class="animate">Gérez Votre École avec Excellence</h1>
-            <p class="animate" style="animation-delay: 0.2s;">PreSkool est la plateforme tout-en-un pour les parents, enseignants et administrateurs. Modernisez votre gestion académique dès aujourd'hui.</p>
+            <p class="animate">Simplifiez la gestion de votre établissement scolaire avec une plateforme moderne et intuitive.</p>
             <div class="animate" style="animation-delay: 0.4s;">
-                <a href="{% url 'signup' %}" class="btn btn-premium mr-3">Commencer Maintenant</a>
-                <a href="{% url 'login' %}" class="btn btn-outline-light btn-premium" style="background:transparent; border: 2px solid white;">Se Connecter</a>
+                <a href="{% url 'signup' %}" class="btn btn-premium btn-lg mr-3 shadow">Commencer Maintenant</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg" style="border: 2px solid white; border-radius: 50px;">Se Connecter</a>
             </div>
         </div>
     </header>
 
-    <!-- Features Section -->
+    <!-- SECTION 2: POURQUOI CHOISIR PRESKOOL? -->
     <section id="features" class="features">
         <div class="container">
             <div class="row text-center mb-5">
@@ -66,47 +76,223 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon"><i class="fas fa-user-graduate"></i></div>
-                        <h4>Suivi des Étudiants</h4>
-                        <p>Visualisez les progrès, les absences et les résultats en temps réel.</p>
+                <div class="col-md-3 col-12 d-flex mb-4">
+                    <div class="card flex-fill border-0 shadow-sm text-center feature-card-ui" style="border-radius: 15px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)';">
+                        <div class="card-body p-3">
+                            <div class="icon-shape mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgba(61,94,235,0.1); border-radius: 50%; color: #3d5eeb; font-size: 24px;">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <h5 class="font-weight-bold mb-2 text-dark">Rapide et simple</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.9rem;">Une interface optimisée pour une prise en main immédiate.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                        <h4>Espace Enseignant</h4>
-                        <p>Gérez vos cours, devoirs et évaluations en quelques clics.</p>
+                <div class="col-md-3 col-12 d-flex mb-4">
+                    <div class="card flex-fill border-0 shadow-sm text-center feature-card-ui" style="border-radius: 15px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)';">
+                        <div class="card-body p-3">
+                            <div class="icon-shape mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgba(23,162,184,0.1); border-radius: 50%; color: #17a2b8; font-size: 24px;">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h5 class="font-weight-bold mb-2 text-dark">Sécurisé</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.9rem;">Vos données sont protégées par les meilleurs protocoles.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-card text-center">
-                        <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
-                        <h4>Emploi du Temps</h4>
-                        <p>Une organisation fluide pour ne jamais rater un cours important.</p>
+                <div class="col-md-3 col-12 d-flex mb-4">
+                    <div class="card flex-fill border-0 shadow-sm text-center feature-card-ui" style="border-radius: 15px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)';">
+                        <div class="card-body p-3">
+                            <div class="icon-shape mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgba(40,167,69,0.1); border-radius: 50%; color: #28a745; font-size: 24px;">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <h5 class="font-weight-bold mb-2 text-dark">Responsive</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.9rem;">Accédez à votre espace depuis mobile, tablette ou PC.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-12 d-flex mb-4">
+                    <div class="card flex-fill border-0 shadow-sm text-center feature-card-ui" style="border-radius: 15px; transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 30px rgba(0,0,0,0.1)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 .125rem .25rem rgba(0,0,0,.075)';">
+                        <div class="card-body p-3">
+                            <div class="icon-shape mb-3 mx-auto d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: rgba(245,166,35,0.1); border-radius: 50%; color: #f5a623; font-size: 24px;">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <h5 class="font-weight-bold mb-2 text-dark">Tout-en-un</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.9rem;">Gestion académique, financière et administrative centralisée.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <hr class="my-5 opacity-25">
+
+    <!-- SECTION 3: DESCRIPTION DU PROJET -->
+    <section id="about" class="about-us py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 about-img animate">
+                    <img src="{% static 'assets/img/school_about.png' %}" alt="Notre École" class="img-fluid rounded shadow-lg">
+                </div>
+                <div class="col-lg-6 pl-lg-5 animate" style="animation-delay: 0.2s;">
+                    <h2 class="font-weight-bold mb-4">À Propos de PreSkool</h2>
+                    <p class="lead text-muted">PreSkool est une plateforme dédiée à la gestion scolaire permettant aux administrateurs, enseignants et parents de suivre efficacement les activités académiques.</p>
+                    <p>Notre mission est de digitaliser l'éducation avec des outils modernes qui facilitent la communication et l'organisation au sein des établissements scolaires.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="my-5 opacity-25">
+
+    <!-- SECTION 4: STATISTIQUES (WOW EFFECT) -->
+    <section class="stats-section py-5">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 stat-item" style="transition: transform 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+                    <i class="fas fa-user-graduate fa-3x mb-3 text-warning"></i>
+                    <h3><span class="counter" data-target="500">0</span>+</h3>
+                    <p>Étudiants</p>
+                </div>
+                <div class="col-md-3 stat-item" style="transition: transform 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+                    <i class="fas fa-chalkboard-teacher fa-3x mb-3 text-info"></i>
+                    <h3><span class="counter" data-target="50">0</span></h3>
+                    <p>Enseignants</p>
+                </div>
+                <div class="col-md-3 stat-item" style="transition: transform 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+                    <i class="fas fa-book fa-3x mb-3 text-success"></i>
+                    <h3><span class="counter" data-target="20">0</span></h3>
+                    <p>Matières</p>
+                </div>
+                <div class="col-md-3 stat-item" style="transition: transform 0.3s; cursor: default;" onmouseover="this.style.transform='translateY(-10px)'" onmouseout="this.style.transform='none'">
+                    <i class="fas fa-school fa-3x mb-3 text-primary"></i>
+                    <h3><span class="counter" data-target="10">0</span></h3>
+                    <p>Classes</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="my-5 opacity-25">
+
+    <!-- SECTION 5: TÉMOIGNAGES (BONUS) -->
+    <section class="testimonials py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="font-weight-bold">Ce qu'ils en disent</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card p-4 shadow-sm rounded h-100" style="background-color: #fff; border-left: 4px solid #f5a623;">
+                        <i class="fas fa-quote-left text-primary mb-3 fa-2x opacity-50"></i>
+                        <p class="font-italic text-muted">"PreSkool a simplifié radicalement la gestion de notre école. Le suivi des notes et la gestion administrative."</p>
+                        <h6 class="font-weight-bold mt-3">-Alae , Directeur</h6>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card p-4 shadow-sm rounded h-100" style="background-color: #fff; border-left: 4px solid #f5a623;">
+                        <i class="fas fa-quote-left text-primary mb-3 fa-2x opacity-50"></i>
+                        <p class="font-italic text-muted">"Une interface facile à utiliser et très intuitive. La communication avec les élèves et les parents est devenue instantanée."</p>
+                        <h6 class="font-weight-bold mt-3">- Chaimae Zaki, Enseignante</h6>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="testimonial-card p-4 shadow-sm rounded h-100" style="background-color: #fff; border-left: 4px solid #f5a623;">
+                        <i class="fas fa-quote-left text-primary mb-3 fa-2x opacity-50"></i>
+                        <p class="font-italic text-muted">"Grâce à PreSkool, je peux vérifier mes notes, mes absences et mon emploi du temps en temps réel depuis mon téléphone."</p>
+                        <h6 class="font-weight-bold mt-3">- Chaymaa Oualili, Étudiante</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="my-5 opacity-25">
+
+    <!-- SECTION 6: CONTACT -->
+    <section id="contact" class="contact-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-5">
+                    <div class="contact-info-box shadow">
+                        <h3 class="font-weight-bold mb-4">Contactez-nous</h3>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <p class="mb-0 font-weight-bold">Email</p>
+                                <p class="text-muted">contact@preskool.com</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <p class="mb-0 font-weight-bold">Téléphone</p>
+                                <p class="text-muted">+212 522 00 00 00</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <p class="mb-0 font-weight-bold">Adresse</p>
+                                <p class="text-muted">123 Avenue Mohamed V, Tanger</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <form class="contact-form p-4" method="POST">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 form-group">
+                                <label>Nom Complet</label>
+                                <input type="text" name="name" class="form-control" placeholder="Ex: Jean Dupont" required>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" class="form-control" placeholder="Ex: jean@email.com" required>
+                            </div>
+                            <div class="col-12 form-group">
+                                <label>Message</label>
+                                <textarea class="form-control" name="message" rows="5" placeholder="Comment pouvons-nous vous aider?" required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-premium btn-lg w-100 mt-3">Envoyer le Message</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 8: FOOTER (OBLIGATOIRE) -->
     <footer class="bg-dark text-white py-5">
         <div class="container">
             <div class="row">
-                <div class="col-md-6">
-                    <img src="{% static 'assets/img/logo-white.png' %}" alt="Logo" height="40" class="mb-3">
-                    <p>La solution moderne pour la gestion d'établissements scolaires.</p>
+                <div class="col-md-4">
+                    <img src="{% static 'assets/img/logo.png' %}" alt="Logo" height="40" class="mb-3 brightness-reverse">
+                    <p class="text-muted">La plateforme d'excellence pour une gestion scolaire intelligente et moderne au Maroc et au-delà.</p>
                 </div>
-                <div class="col-md-6 text-md-right">
-                    <p>&copy; 2026 PreSkool. Tous droits réservés.</p>
+                <div class="col-md-4 text-center">
+                    <h5 class="font-weight-bold mb-3">Liens Rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-muted">Accueil</a></li>
+                        <li><a href="#about" class="text-muted">À Propos</a></li>
+                        <li><a href="#contact" class="text-muted">Contact</a></li>
+                        <li><a href="{% url 'login' %}" class="text-muted">Connexion</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-md-right">
+                    <h5 class="font-weight-bold mb-3">Suivez-nous</h5>
                     <div class="social-links">
-                        <a href="#" class="text-white mr-3"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-white mr-3"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-sm mr-2"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-sm mr-2"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-outline-light btn-sm"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
+            </div>
+            <hr class="bg-secondary my-4">
+            <div class="text-center text-muted small">
+                <p>&copy; 2026 PreSkool. Tous droits réservés.</p>
             </div>
         </div>
     </footer>
@@ -114,6 +300,74 @@
     <!-- Scripts -->
     <script src="{% static 'assets/js/jquery-3.6.0.min.js' %}"></script>
     <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'assets/js/script.js' %}"></script>
+    <script>
+       $(document).ready(function() {
+          var $track  = $('#dm-track');
+          var $thumb  = $('#dm-thumb');
+          var $sun    = $('#dm-icon-sun');
+          var $moon   = $('#dm-icon-moon');
+
+          function applyDarkUI() {
+             $track.css('background', 'linear-gradient(135deg, #8b5cf6, #6366f1)');
+             $thumb.css({'transform': 'translateX(20px)', 'background': '#e9d5ff'});
+             $sun.show(); $moon.hide();
+          }
+
+          function applyLightUI() {
+             $track.css('background', '#dde1e9');
+             $thumb.css({'transform': 'translateX(0)', 'background': '#fff'});
+             $sun.hide(); $moon.show();
+          }
+
+          if (localStorage.getItem('theme') === 'dark') applyDarkUI();
+
+          $('#dark-mode-toggle').on('click', function(e) {
+             e.preventDefault();
+             $('body').toggleClass('dark-mode');
+             if ($('body').hasClass('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                applyDarkUI();
+             } else {
+                localStorage.setItem('theme', 'light');
+                applyLightUI();
+             }
+          });
+
+          // Animation Compteurs Statistiques
+          var counters = document.querySelectorAll('.counter');
+          var speed = 100; // Plus basse la valeur, plus rapide est l'animation
+          var animated = false;
+
+          function animateCounters() {
+             counters.forEach(function(counter) {
+                var updateCount = function() {
+                   var target = +counter.getAttribute('data-target');
+                   var count = +counter.innerText;
+                   var inc = target / speed;
+
+                   if (count < target) {
+                      counter.innerText = Math.ceil(count + inc);
+                      setTimeout(updateCount, 20);
+                   } else {
+                      counter.innerText = target;
+                   }
+                };
+                updateCount();
+             });
+          }
+
+          // Déclencher l'animation lors du défilement
+          var observer = new IntersectionObserver(function(entries) {
+             if (entries[0].isIntersecting && !animated) {
+                animated = true;
+                animateCounters();
+             }
+          }, { threshold: 0.5 });
+          
+          var statsSection = document.querySelector('.stats-section');
+          if(statsSection) observer.observe(statsSection);
+
+       });
+    </script>
 </body>
 </html>

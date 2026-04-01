@@ -2,46 +2,90 @@
 {% load static %}
 
 {% block body %}
-<div class="page-header">
-    <div class="row">
-        <div class="col-sm-12">
-            <h3 class="page-title">Bienvenue {{ user.username }} !</h3>
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item active">Espace Étudiant</li>
-            </ul>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card premium-card bg-white p-3 mb-4">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h3 class="page-title mb-1">Bienvenue {{ student.first_name }} !</h3>
+                    <p class="text-muted mb-0"><i class="fas fa-graduation-cap mr-2"></i>Espace Étudiant • {{ student.student_class }} • Section {{ student.section }}</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="row">
     <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-one w-100">
+        <div class="card bg-one w-100 shadow-sm border-0">
             <div class="card-body">
                 <div class="db-widgets d-flex justify-content-between align-items-center">
                     <div class="db-info">
-                        <h6>Mes Cours</h6>
-                        <h3>04/06</h3>
+                        <h6>Mes Matières</h6>
+                        <h3 class="font-weight-bold">{{ subjects_count }}</h3>
+                    </div>
+                    <div class="db-icon">
+                        <i class="fas fa-book-reader fa-2x opacity-50"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title">Mon Emploi du Temps Aujourd'hui</h5>
-            </div>
+    
+    <div class="col-xl-3 col-sm-6 col-12 d-flex">
+        <div class="card bg-two w-100 shadow-sm border-0">
             <div class="card-body">
-                
-                <div class="calendar-info">
-                   <p><strong>09 am :</strong> Fermentum (09am - 10pm)</p>
-                   <p><strong>10 am :</strong> Pharetra et (10am - 11am)</p>
-                   <p><strong>11 am :</strong> Break (11am - 11.30am)</p>
+                <div class="db-widgets d-flex justify-content-between align-items-center">
+                    <div class="db-info">
+                        <h6>ID Étudiant</h6>
+                        <h3 class="font-weight-bold">{{ student.student_id }}</h3>
+                    </div>
+                    <div class="db-icon">
+                        <i class="fas fa-id-card fa-2x opacity-50"></i>
+                    </div>
                 </div>
-                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card premium-card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom p-4">
+                <h5 class="card-title mb-0 font-weight-bold">
+                    <i class="far fa-calendar-alt text-primary mr-2"></i>Mon Emploi du Temps Aujourd'hui ({{ today }})
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                {% if timetables %}
+                    <div class="table-responsive">
+                        <table class="table table-hover table-center mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th>Heure</th>
+                                    <th>Matière</th>
+                                    <th>Enseignant</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in timetables %}
+                                <tr>
+                                    <td class="font-weight-bold text-primary">{{ item.start_time|time:"H:i" }} - {{ item.end_time|time:"H:i" }}</td>
+                                    <td>{{ item.subject.name }}</td>
+                                    <td>{{ item.teacher.first_name }} {{ item.teacher.last_name }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <img src="{% static 'assets/img/calendar.png' %}" alt="No Classes" class="mb-3" width="60" style="opacity: 0.3;">
+                        <p class="text-muted">Aucun cours prévu pour aujourd'hui.</p>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

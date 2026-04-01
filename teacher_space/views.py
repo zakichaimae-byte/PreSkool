@@ -2,29 +2,27 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Grade, Attendance
 from academic.models import TimeTable, Exam
-from students.models import Student
+from student.models import Student
 from subjects.models import Subject
 from teachers.models import Teacher
 from django.contrib import messages
 
 @login_required
 def my_classes_view(request):
-    try:
-        teacher = request.user.teacher_profile
-    except Teacher.DoesNotExist:
+    if not hasattr(request.user, 'teacher_profile'):
         messages.error(request, "Votre compte n'est pas lié à un profil enseignant.")
         return redirect('dashboard')
+    teacher = request.user.teacher_profile
         
-    timetables = TimeTable.objects.filter(teacher=teacher).order_by('day_of_week', 'start_time')
+    timetables = TimeTable.objects.filter(subject__teacher=teacher).order_by('day_of_week', 'start_time')
     return render(request, 'teacher_space/my_classes.html', {'timetables': timetables})
 
 @login_required
 def grade_entry_view(request):
-    try:
-        teacher = request.user.teacher_profile
-    except Teacher.DoesNotExist:
+    if not hasattr(request.user, 'teacher_profile'):
         messages.error(request, "Votre compte n'est pas lié à un profil enseignant.")
         return redirect('dashboard')
+    teacher = request.user.teacher_profile
         
     students = Student.objects.all()
     subjects = Subject.objects.all()
@@ -61,11 +59,10 @@ def grade_entry_view(request):
 
 @login_required
 def attendance_view(request):
-    try:
-        teacher = request.user.teacher_profile
-    except Teacher.DoesNotExist:
+    if not hasattr(request.user, 'teacher_profile'):
         messages.error(request, "Votre compte n'est pas lié à un profil enseignant.")
         return redirect('dashboard')
+    teacher = request.user.teacher_profile
         
     students = Student.objects.all()
     

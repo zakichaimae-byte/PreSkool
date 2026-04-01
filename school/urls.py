@@ -15,7 +15,6 @@ urlpatterns += i18n_patterns(
     path('departments/', include('departments.urls')),
     path('subjects/', include('subjects.urls')),
     path('academic/', include('academic.urls')),
-    path('students/', include('students.urls')),
     path('fees/', include('fees.urls')),
     path('events/', include('events.urls')),
     path('library/', include('library.urls')),

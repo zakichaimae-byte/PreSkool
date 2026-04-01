@@ -14,6 +14,8 @@ def event_add(request):
         start_time = request.POST.get('start_time')
         end_time = request.POST.get('end_time')
         location = request.POST.get('location')
+        responsible = request.POST.get('responsible')
+        event_type = request.POST.get('event_type')
         
         Event.objects.create(
             title=title,
@@ -21,7 +23,9 @@ def event_add(request):
             date=date,
             start_time=start_time,
             end_time=end_time,
-            location=location
+            location=location,
+            responsible=responsible,
+            event_type=event_type
         )
         messages.success(request, "Évènement ajouté.")
         return redirect('event_list')
