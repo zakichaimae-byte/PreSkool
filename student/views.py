@@ -55,10 +55,10 @@ def add_student(request):
                 gender=gender,
                 date_of_birth=date_of_birth,
                 student_class=student_class,
-                joining_date=joining_date,
-                mobile_number=mobile_number,
-                admission_number=admission_number,
-                section=section,
+                joining_date=joining_date or None, # Will trigger error if None, but we need to handle it
+                mobile_number=mobile_number or '',
+                admission_number=admission_number or '',
+                section=section or '',
                 student_image=student_image,
                 parent=parent  # On lie l'étudiant au parent qu'on vient de créer
             )
@@ -93,11 +93,15 @@ def edit_student(request, student_id):
         student.gender = request.POST.get('gender')
         student.date_of_birth = request.POST.get('date_of_birth')
         student.student_class = request.POST.get('student_class')
-        student.religion = request.POST.get('religion')
-        student.joining_date = request.POST.get('joining_date')
-        student.mobile_number = request.POST.get('mobile_number')
-        student.admission_number = request.POST.get('admission_number')
-        student.section = request.POST.get('section')
+        
+        # On ne met à jour la date d'adhésion que si elle est fournie
+        joining_date = request.POST.get('joining_date')
+        if joining_date:
+            student.joining_date = joining_date
+            
+        student.mobile_number = request.POST.get('mobile_number') or ''
+        student.admission_number = request.POST.get('admission_number') or ''
+        student.section = request.POST.get('section') or ''
 
         # Gestion de la nouvelle image (s'il en a uploadé une nouvelle)
         if request.FILES.get('student_image'):
