@@ -11,7 +11,7 @@ from academic.models import Exam, TimeTable
 from subjects.models import Subject
 from .models import Notification
 from teacher_space.models import Attendance, Grade
-from django.db.models import Count
+from django.db.models import Count, Q
 import json
 import datetime
 
@@ -231,7 +231,7 @@ def student_subjects_view(request):
         messages.error(request, "Accès réservé aux étudiants.")
         return redirect('dashboard')
     
-    subjects = Subject.objects.filter(class_name=student_profile.student_class)
+    subjects = Subject.objects.filter(Q(class_name=student_profile.student_class) | Q(class_name='Général'))
     return render(request, 'student_subjects.html', {'subjects': subjects, 'notifications': notifications})
 
 @login_required(login_url='login')
@@ -242,8 +242,21 @@ def student_timetable_view(request):
         messages.error(request, "Accès réservé aux étudiants.")
         return redirect('dashboard')
     
-    timetables = TimeTable.objects.filter(class_name=student_profile.student_class).order_by('day_of_week', 'start_time')
-    return render(request, 'student_timetable.html', {'timetables': timetables, 'notifications': notifications})
+    timetables = TimeTable.objects.filter(
+        Q(class_name=student_profile.student_class) | Q(class_name='Général')
+    ).order_by('day_of_week', 'start_time')
+    
+    # Organiser par jour pour le template
+    timetable_by_day = {}
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    for day in days:
+        timetable_by_day[day] = [t for t in timetables if t.day_of_week == day]
+
+    return render(request, 'student_timetable.html', {
+        'timetable_by_day': timetable_by_day, 
+        'notifications': notifications,
+        'student': student_profile
+    })
 
 @login_required(login_url='login')
 def student_exams_view(request):
@@ -253,7 +266,9 @@ def student_exams_view(request):
         messages.error(request, "Accès réservé aux étudiants.")
         return redirect('dashboard')
     
-    exams = Exam.objects.filter(subject__class_name=student_profile.student_class).order_by('date')
+    exams = Exam.objects.filter(
+        Q(subject__class_name=student_profile.student_class) | Q(subject__class_name='Général')
+    ).order_by('date')
     return render(request, 'student_exams.html', {'exams': exams, 'notifications': notifications})
 
 @login_required(login_url='login')
