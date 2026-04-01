@@ -1,0 +1,80 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Modifier l'Emploi du temps</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'timetable_list' %}">Emploi du temps</a></li>
+                <li class="breadcrumb-item active">Modifier</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Classe</label>
+                                <input type="text" name="class_name" class="form-control" value="{{ entry.class_name }}" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Matière</label>
+                                <select name="subject" class="form-control" required>
+                                    <option value="">Sélectionner une matière</option>
+                                    {% for subject in subjects %}
+                                    <option value="{{ subject.id }}" {% if entry.subject.id == subject.id %}selected{% endif %}>{{ subject.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Jour de la semaine</label>
+                                <select name="day_of_week" class="form-control" required>
+                                    {% with days="Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday" %}
+                                    {% for day in days.split|join:","|slice:":-1"|default:days|add:","|slice:":-1"|default:days|make_list|default:days|default:days %}
+                                    {# Django template dummy way to loop over a list #}
+                                    {% endwith %}
+                                    <option value="Monday" {% if entry.day_of_week == 'Monday' %}selected{% endif %}>Lundi</option>
+                                    <option value="Tuesday" {% if entry.day_of_week == 'Tuesday' %}selected{% endif %}>Mardi</option>
+                                    <option value="Wednesday" {% if entry.day_of_week == 'Wednesday' %}selected{% endif %}>Mercredi</option>
+                                    <option value="Thursday" {% if entry.day_of_week == 'Thursday' %}selected{% endif %}>Jeudi</option>
+                                    <option value="Friday" {% if entry.day_of_week == 'Friday' %}selected{% endif %}>Vendredi</option>
+                                    <option value="Saturday" {% if entry.day_of_week == 'Saturday' %}selected{% endif %}>Samedi</option>
+                                    <option value="Sunday" {% if entry.day_of_week == 'Sunday' %}selected{% endif %}>Dimanche</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Heure de début</label>
+                                <input type="time" name="start_time" class="form-control" value="{{ entry.start_time|time:'H:i' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <div class="form-group">
+                                <label>Heure de fin</label>
+                                <input type="time" name="end_time" class="form-control" value="{{ entry.end_time|time:'H:i' }}" required>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

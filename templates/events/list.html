@@ -1,0 +1,70 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title">Liste des Évènements</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
+                <li class="breadcrumb-item active">Évènements</li>
+            </ul>
+        </div>
+        <div class="col-auto text-right float-right ml-auto">
+            <a href="{% url 'event_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card card-table">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0 datatable">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Horaire</th>
+                                <th>Lieu</th>
+                                <th>Responsable</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                            <tr>
+                                <td><strong>{{ event.title }}</strong></td>
+                                <td>
+                                    {% if event.event_type == 'Soutenance' %}
+                                        <span class="badge badge-primary">Soutenance</span>
+                                    {% elif event.event_type == 'TP/Atelier' %}
+                                        <span class="badge badge-info">TP / Atelier</span>
+                                    {% elif event.event_type == 'Conférence' %}
+                                        <span class="badge badge-warning">Conférence</span>
+                                    {% elif event.event_type == 'Fête' %}
+                                        <span class="badge badge-success">Fête scolaire</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Autre</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ event.date }}</td>
+                                <td>{{ event.start_time }} - {{ event.end_time }}</td>
+                                <td>{{ event.location|default:"-" }}</td>
+                                <td>{{ event.responsible|default:"-" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">Aucun évènement prévu.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

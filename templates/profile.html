@@ -1,0 +1,102 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="page-title">Mon Profil</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
+                <li class="breadcrumb-item active">Mon Profil</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="profile-header card premium-card mb-4">
+            <div class="row align-items-center p-4">
+                <div class="col-auto profile-image">
+                    <img class="rounded-circle shadow-sm" alt="User Image"
+                        src="{% static 'assets/img/profiles/' %}{% if user.username == 'chaymaa_oualili' %}oualili.jpeg{% elif user.username == 'prof_test' %}chaimae.jpeg{% elif user.username == 'admin' %}Jaaouani.jpeg{% elif user.student_profile and user.student_profile.gender == 'Female' %}chaimae.jpeg{% else %}Jaaouani.jpeg{% endif %}"
+                        width="120">
+                </div>
+                <div class="col ml-md-n2 profile-user-info">
+                    <h4 class="user-name mb-1 font-weight-bold text-capitalize">
+                        {% if user.teacher_profile %}
+                        {{ user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}
+                        {% elif user.first_name %}
+                        {{ user.first_name }} {{ user.last_name }}
+                        {% else %}
+                        {{ user.username }}
+                        {% endif %}
+                    </h4>
+                    <h6 class="text-muted">@{{ user.username }}</h6>
+                    <div class="user-Location mt-2"><i class="fas fa-envelope text-primary mr-1"></i> {{ user.email|default:"Non spécifié" }}</div>
+                    <div class="mt-3">
+                        {% if user.is_superuser %} <span class="badge badge-primary px-3 py-2">Administrateur</span>
+                        {% elif user.groups.all.0.name == "Enseignant" %} <span
+                            class="badge badge-success px-3 py-2">Enseignant</span>
+                        {% else %} <span class="badge badge-info px-3 py-2">Étudiant</span> {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content profile-tab-cont">
+            <div class="tab-pane fade show active" id="per_details_tab">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card premium-card">
+                            <div class="card-body p-4">
+                                <h5 class="card-title border-bottom pb-3 mb-4">
+                                    <i class="fas fa-info-circle text-primary mr-2"></i>Informations Personnelles
+                                </h5>
+                                <div class="row border-bottom py-2">
+                                    <p class="col-sm-3 font-weight-bold text-muted mb-0">Nom Complet</p>
+                                    <p class="col-sm-9 mb-0 text-capitalize">
+                                        {% if user.teacher_profile %}
+                                        {{ user.teacher_profile.first_name }} {{ user.teacher_profile.last_name }}
+                                        {% elif user.first_name %}
+                                        {{ user.first_name }} {{ user.last_name }}
+                                        {% else %}
+                                        {{ user.username }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="row border-bottom py-2 mt-2">
+                                    <p class="col-sm-3 font-weight-bold text-muted mb-0">Identifiant</p>
+                                    <p class="col-sm-9 mb-0">{{ user.username }}</p>
+                                </div>
+                                <div class="row border-bottom py-2 mt-2">
+                                    <p class="col-sm-3 font-weight-bold text-muted mb-0">Email</p>
+                                    <p class="col-sm-9 mb-0">
+                                        {% if user.email %}
+                                        <a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a>
+                                        {% else %}
+                                        Non spécifié
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="row py-2 mt-2">
+                                    <p class="col-sm-3 font-weight-bold text-muted mb-0">Statut du compte</p>
+                                    <p class="col-sm-9 mb-0">
+                                        {% if user.is_active %}
+                                        <span class="text-success"><i class="fas fa-check-circle mr-1"></i> Actif</span>
+                                        {% else %}
+                                        <span class="text-danger"><i class="fas fa-times-circle mr-1"></i>
+                                            Inactif</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

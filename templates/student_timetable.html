@@ -1,0 +1,60 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="page-title">Mon Emploi du Temps</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
+                <li class="breadcrumb-item active">Emploi du Temps</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card premium-card border-0 shadow-sm">
+            <div class="card-header bg-white border-bottom p-4">
+                <h5 class="card-title mb-0 font-weight-bold text-primary">
+                    <i class="fas fa-calendar-week mr-2"></i>Semaine Complète - Classe {{ student.student_class }}
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    {% for day, morning_timetables in timetable_by_day.items %}
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-none border">
+                            <div class="card-header bg-light py-2">
+                                <h6 class="mb-0 font-weight-bold text-dark">{{ day }}</h6>
+                            </div>
+                            <div class="card-body p-2">
+                                {% if morning_timetables %}
+                                    <ul class="list-group list-group-flush">
+                                        {% for item in morning_timetables %}
+                                        <li class="list-group-item px-2 border-0">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="d-block font-weight-bold">{{ item.subject.name }}</span>
+                                                    <small class="text-muted">{{ item.teacher.first_name }} {{ item.teacher.last_name }}</small>
+                                                </div>
+                                                <span class="badge badge-primary-light">{{ item.start_time|time:"H:i" }}</span>
+                                            </div>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p class="text-muted text-center py-3 small mb-0">Pas de cours</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

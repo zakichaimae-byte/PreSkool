@@ -1,0 +1,577 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block body %}
+<style>
+/* Section title */
+.section-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #2c3e50;
+}
+
+/* Card générale */
+.attendance-stat-card {
+    position: relative;
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Hover effect */
+.attendance-stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* Texte */
+.stat-label {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Icône en arrière-plan */
+.stat-bg-icon {
+    position: absolute;
+    right: 15px;
+    bottom: 10px;
+    font-size: 50px;
+    opacity: 0.15;
+}
+
+/* Couleurs spécifiques */
+.card-present {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
+.card-absent {
+    background: linear-gradient(135deg, #ff6a6a, #ff3d3d);
+}
+
+.card-total {
+    background: linear-gradient(135deg, #00d084, #00a65a);
+}
+/* Card style */
+.premium-card {
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+.premium-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+}
+
+/* Section title */
+.section-title {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+/* Filter */
+.filter-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+.filter-section label {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Table */
+.grade-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.grade-table thead {
+    background: #f8fafc;
+}
+.grade-table th {
+    padding: 12px;
+    text-align: left;
+    font-size: 13px;
+    color: #6b7280;
+}
+.grade-table td {
+    padding: 14px 12px;
+    border-top: 1px solid #eee;
+    font-size: 14px;
+}
+.grade-table tr:hover {
+    background: #f9fafb;
+}
+
+/* Scroll */
+.table-scroll-wrapper {
+    overflow-x: auto;
+}
+
+/* Avatar */
+.student-avatar {
+    display: inline-block;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    color: white;
+    font-size: 13px;
+    text-align: center;
+    line-height: 35px;
+    margin-right: 10px;
+}
+
+/* Gradients avatar */
+.bg-grad-1 { background: linear-gradient(135deg,#667eea,#764ba2); }
+.bg-grad-2 { background: linear-gradient(135deg,#43cea2,#185a9d); }
+.bg-grad-3 { background: linear-gradient(135deg,#ff9a9e,#fad0c4); }
+.bg-grad-4 { background: linear-gradient(135deg,#a18cd1,#fbc2eb); }
+.bg-grad-5 { background: linear-gradient(135deg,#fbc2eb,#a6c1ee); }
+.bg-grad-6 { background: linear-gradient(135deg,#ffecd2,#fcb69f); }
+
+/* Score badges */
+.score-badge {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+}
+.score-excellent { background:#dcfce7; color:#065f46; }
+.score-good { background:#dbeafe; color:#1e40af; }
+.score-average { background:#fef9c3; color:#92400e; }
+.score-fail { background:#fee2e2; color:#991b1b; }
+
+</style>
+<!-- Hero Banner Section -->
+<div class="hero-banner" style="background-image: url('{% static 'assets/img/banner.png' %}');">
+    <div class="hero-content">
+        <div class="welcome-text">
+            <h2 class="text-white">{{ welcome_to }} <span class="text-warning">PreSkool</span></h2>
+            <p class="lead">{{ dashboard_subtitle }}</p>
+        </div>
+        <div class="mt-4">
+            <span class="badge badge-pill badge-light px-3 py-2 text-primary shadow-sm">
+                <i class="fas fa-user-shield mr-2"></i>
+                {% if user.is_superuser %} {{ sys_admin }}
+                {% elif user.groups.all.0.name == "Enseignant" %} {{ teacher }}
+                {% else %} {{ student }} {% endif %}
+            </span>
+            <span class="badge badge-pill badge-info ml-2 px-3 py-2 shadow-sm">
+                <i class="far fa-calendar-alt mr-2"></i> {% now "j F Y" %}
+            </span>
+        </div>
+    </div>
+</div>
+
+{% if user.is_superuser %}
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — Stats Générales
+════════════════════════════════════════════ -->
+<div class="row">
+    <!-- Total Étudiants -->
+    <div class="col-xl-4 col-sm-6 col-12 d-flex mb-4">
+        <div class="card premium-card w-100 p-2">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-one">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1">{{ total_students }}</h6>
+                    <h3 class="font-weight-bold mb-0">{{ student_count }}</h3>
+                    <div class="progress mt-3" style="height:6px; border-radius:10px;">
+                        <div class="progress-bar bg-primary" style="width:70%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enseignants -->
+    <div class="col-xl-4 col-sm-6 col-12 d-flex mb-4">
+        <div class="card premium-card w-100 p-2">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-two">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1">{{ txt_teachers }}</h6>
+                    <h3 class="font-weight-bold mb-0">{{ teacher_count }}</h3>
+                    <div class="progress mt-3" style="height:6px; border-radius:10px;">
+                        <div class="progress-bar bg-warning" style="width:50%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Départements -->
+    <div class="col-xl-4 col-sm-6 col-12 d-flex mb-4">
+        <div class="card premium-card w-100 p-2">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-three">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1">{{ txt_departments }}</h6>
+                    <h3 class="font-weight-bold mb-0">{{ department_count }}</h3>
+                    <div class="progress mt-3" style="height:6px; border-radius:10px;">
+                        <div class="progress-bar bg-success" style="width:85%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — Présence / Absence du jour
+════════════════════════════════════════════ -->
+<div class="row mb-2">
+    <div class="col-12">
+        <h6 class="section-title mb-3">
+            <i class="fas fa-calendar-check"></i> Présences du jour — {% now "j F Y" %}
+        </h6>
+    </div>
+</div>
+<div class="row mb-4">
+    <!-- Présents -->
+    <div class="col-md-4 col-sm-6 mb-4">
+        <div class="attendance-stat-card card-present">
+            <div class="stat-label"><i class="fas fa-user-check mr-1"></i> Présents aujourd'hui</div>
+            <div class="stat-number mt-2">{{ present_today }}</div>
+            <div class="stat-bg-icon"><i class="fas fa-user-check"></i></div>
+        </div>
+    </div>
+    <!-- Absents -->
+    <div class="col-md-4 col-sm-6 mb-4">
+        <div class="attendance-stat-card card-absent">
+            <div class="stat-label"><i class="fas fa-user-times mr-1"></i> Absents aujourd'hui</div>
+            <div class="stat-number mt-2">{{ absent_today }}</div>
+            <div class="stat-bg-icon"><i class="fas fa-user-times"></i></div>
+        </div>
+    </div>
+    <!-- Total -->
+    <div class="col-md-4 col-sm-6 mb-4">
+        <div class="attendance-stat-card card-total">
+            <div class="stat-label"><i class="fas fa-users mr-1"></i> Total élèves</div>
+            <div class="stat-number mt-2">{{ student_count }}</div>
+            <div class="stat-bg-icon"><i class="fas fa-users"></i></div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — Graphiques de répartition
+════════════════════════════════════════════ -->
+<div class="row">
+    <!-- Répartition par Genre -->
+    <div class="col-md-12 col-lg-6 mb-4">
+        <div class="card premium-card h-100 card-stripe-gender">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="section-title">
+                    <i class="fas fa-chart-pie"></i> {{ gender_distribution }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div style="height:280px; position:relative;">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Répartition des Enseignants -->
+    <div class="col-md-12 col-lg-6 mb-4">
+        <div class="card premium-card h-100 card-stripe-teacher">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="section-title">
+                    <i class="fas fa-chart-bar"></i> {{ teacher_distribution }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div style="height:280px; position:relative;">
+                    <canvas id="teacherChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — Évolution Présence / Absence (7 jours)
+════════════════════════════════════════════ -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card premium-card card-stripe-chart">
+            <div class="card-header bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <h5 class="section-title">
+                    <i class="fas fa-chart-line"></i> Évolution Présence / Absence — 7 derniers jours
+                </h5>
+                <span class="badge badge-pill" style="background:#eef2ff; color:#4f46e5; font-size:0.78rem; padding:6px 14px;">
+                    <i class="fas fa-calendar-week mr-1"></i> Cette semaine
+                </span>
+            </div>
+            <div class="card-body">
+                <div style="height:270px; position:relative;">
+                    <canvas id="evolutionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — Tableau des Notes (avec filtres)
+════════════════════════════════════════════ -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card premium-card card-stripe-grades">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="section-title">
+                    <i class="fas fa-star"></i> Dernières Notes
+                </h5>
+            </div>
+            <div class="card-body">
+
+                <!-- Filtres -->
+                <form method="get" id="gradeFilterForm">
+                    <div class="filter-section">
+                        <div>
+                            <label><i class="fas fa-filter mr-1"></i> Filtrer par classe</label><br>
+                            <select name="filter_class" class="form-control" onchange="document.getElementById('gradeFilterForm').submit();">
+                                <option value="">-- Toutes les classes --</option>
+                                {% for cls in all_classes %}
+                                <option value="{{ cls }}" {% if selected_class == cls %}selected{% endif %}>{{ cls }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label><i class="far fa-calendar-alt mr-1"></i> Filtrer par date</label><br>
+                            <input type="date" name="filter_date" class="form-control"
+                                   value="{{ selected_date }}"
+                                   onchange="document.getElementById('gradeFilterForm').submit();">
+                        </div>
+                        {% if selected_class or selected_date %}
+                        <div class="align-self-end">
+                            <a href="?" class="btn btn-sm btn-outline-secondary" style="border-radius:10px; padding:8px 16px;">
+                                <i class="fas fa-times mr-1"></i> Réinitialiser
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </form>
+
+                <!-- Tableau -->
+                <div class="table-scroll-wrapper">
+                    <table class="grade-table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Classe</th>
+                                <th>Matière</th>
+                                <th>Note</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for grade in latest_grades %}
+                            <tr>
+                                <td>
+                                    {% with initials=grade.student.first_name|slice:":1" %}
+                                    {% with colors="bg-grad-one,bg-grad-two,bg-grad-three,bg-grad-four,bg-grad-five,bg-grad-six" %}
+                                    {% with color_idx=forloop.counter|add:"-1" %}
+                                    <span class="student-avatar bg-grad-{% cycle '1' '2' '3' '4' '5' '6' %}">
+                                        {{ grade.student.first_name|slice:":1" }}{{ grade.student.last_name|slice:":1" }}
+                                    </span>
+                                    {% endwith %}
+                                    {% endwith %}
+                                    {% endwith %}
+                                    <strong>{{ grade.student.first_name }} {{ grade.student.last_name }}</strong>
+                                </td>
+                                <td><span style="font-size:0.85rem; color:#6366f1; font-weight:600;">{{ grade.student.student_class }}</span></td>
+                                <td>{{ grade.subject.name }}</td>
+                                <td>
+                                    {% if grade.score >= 16 %}
+                                        <span class="score-badge score-excellent">{{ grade.score }}/20</span>
+                                    {% elif grade.score >= 12 %}
+                                        <span class="score-badge score-good">{{ grade.score }}/20</span>
+                                    {% elif grade.score >= 10 %}
+                                        <span class="score-badge score-average">{{ grade.score }}/20</span>
+                                    {% else %}
+                                        <span class="score-badge score-fail">{{ grade.score }}/20</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if grade.score >= 10 %}
+                                        <span class="badge badge-pill" style="background:#d1fae5;color:#065f46;padding:5px 12px;font-size:0.78rem;">
+                                            <i class="fas fa-check-circle mr-1"></i> Admis
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-pill" style="background:#fee2e2;color:#991b1b;padding:5px 12px;font-size:0.78rem;">
+                                            <i class="fas fa-times-circle mr-1"></i> Recalé
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td style="color:#6b7280;font-size:0.83rem;">
+                                    <i class="far fa-clock mr-1"></i>{{ grade.date_recorded|date:"d/m/Y" }}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-5">
+                                    <i class="fas fa-inbox fa-2x mb-2" style="color:#d1d5db;display:block;"></i>
+                                    Aucune note trouvée pour ces critères.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCRIPTS — Chart.js
+════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // ── Shared options ──────────────────────────────
+    Chart.defaults.font.family = "'Poppins', sans-serif";
+
+    // ── 1. Gender Doughnut ──────────────────────────
+    var ctxG = document.getElementById('genderChart').getContext('2d');
+    new Chart(ctxG, {
+        type: 'doughnut',
+        data: {
+            labels: ['{{ boys }}', '{{ girls }}'],
+            datasets: [{
+                data: [{{ male_students }}, {{ female_students }}],
+                backgroundColor: ['#4f46e5', '#ec4899'],
+                borderWidth: 0,
+                hoverOffset: 18
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { usePointStyle: true, padding: 24, font: { size: 13 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(ctx) {
+                            var total = ctx.dataset.data.reduce(function(a, b) { return a + b; }, 0);
+                            var pct = total ? Math.round(ctx.raw / total * 100) : 0;
+                            return ' ' + ctx.label + ': ' + ctx.raw + ' (' + pct + '%)';
+                        }
+                    }
+                }
+            },
+            cutout: '68%'
+        }
+    });
+
+    // ── 2. Teacher Bar Chart ────────────────────────
+    var ctxT = document.getElementById('teacherChart').getContext('2d');
+    new Chart(ctxT, {
+        type: 'bar',
+        data: {
+            labels: {{ dep_names|safe }},
+            datasets: [{
+                label: '{{ txt_teachers }}',
+                data: {{ dep_counts|safe }},
+                backgroundColor: [
+                    '#6366f1','#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6'
+                ],
+                borderRadius: 10,
+                barThickness: 32
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f3f4f6' }, ticks: { stepSize: 1 } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // ── 3. Evolution Line Chart ────────────────────
+    var ctxE = document.getElementById('evolutionChart').getContext('2d');
+    new Chart(ctxE, {
+        type: 'line',
+        data: {
+            labels: {{ evolution_labels|safe }},
+            datasets: [
+                {
+                    label: 'Présents',
+                    data: {{ evolution_present|safe }},
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16,185,129,0.12)',
+                    fill: true,
+                    tension: 0.45,
+                    pointBackgroundColor: '#10b981',
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    borderWidth: 3
+                },
+                {
+                    label: 'Absents',
+                    data: {{ evolution_absent|safe }},
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239,68,68,0.09)',
+                    fill: true,
+                    tension: 0.45,
+                    pointBackgroundColor: '#ef4444',
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    borderWidth: 3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { usePointStyle: true, padding: 20, font: { size: 12 } }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f3f4f6' },
+                    ticks: { stepSize: 1 }
+                },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+});
+</script>
+
+{% endif %}
+{% endblock %}
