@@ -12,7 +12,9 @@
 ## 🎬 Démonstration Vidéo
 Regardez notre écosystème en action :
 
-![Démo PreSkool](media/demo.mp4)
+<video src="media/demo.mp4" width="100%" controls>
+  Votre navigateur ne supporte pas la lecture de vidéos.
+</video>
 
 ---
 
