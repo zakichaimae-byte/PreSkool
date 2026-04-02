@@ -12,9 +12,7 @@
 ## 🎬 Démonstration Vidéo
 Regardez notre écosystème en action :
 
-<video src="assets/demo.mp4" width="100%" controls>
-  Votre navigateur ne supporte pas la lecture de vidéos.
-</video>
+https://drive.google.com/drive/u/0/folders/1nWpRhDkJx4tFfUDYqj0d5Nb1t37nNqNB  
 
 ---
 
