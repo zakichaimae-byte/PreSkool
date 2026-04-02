@@ -9,6 +9,13 @@
 
 ---
 
+## 🎬 Démonstration Vidéo
+Regardez notre écosystème en action :
+
+![Démo PreSkool](media/demo.mp4)
+
+---
+
 ## 🌌 Vision & Esthétique "Deep Space"
 **PreSkool** n'est pas seulement un outil de gestion, c'est une expérience immersive. L'application arbore un thème **"Deep Space Midnight"**, offrant un contraste élevé, des ombres douces (Glassmorphism) et une clarté visuelle exceptionnelle. Conçue pour être à la fois intuitive pour les étudiants et puissante pour les administrateurs.
 
