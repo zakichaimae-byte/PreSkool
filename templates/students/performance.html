@@ -1,0 +1,151 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3 class="font-weight-bold">Ma <span class="text-primary">Performance Académique</span></h3>
+        <p class="text-muted">Analyse détaillée de vos résultats, assiduité et progression.</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Résumé Stats -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm bg-primary text-white h-100" style="border-radius: 15px;">
+            <div class="card-body">
+                <i class="fas fa-check-circle fa-2x mb-3"></i>
+                <h6 class="text-uppercase small opacity-80">Taux de Présence</h6>
+                <h2 class="font-weight-bold mb-0">{{ attendance_rate|stringformat:".1f" }}%</h2>
+                <div class="progress mt-3" style="height: 5px; background: rgba(255,255,255,0.2);">
+                    <div class="progress-bar bg-white" style="width: {{ attendance_rate }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card border-0 shadow-sm bg-success text-white h-100" style="border-radius: 15px;">
+            <div class="card-body">
+                <i class="fas fa-tasks fa-2x mb-3"></i>
+                <h6 class="text-uppercase small opacity-80">Remise des Devoirs</h6>
+                <h2 class="font-weight-bold mb-0">{{ homework_rate|stringformat:".1f" }}%</h2>
+                <div class="progress mt-3" style="height: 5px; background: rgba(255,255,255,0.2);">
+                    <div class="progress-bar bg-white" style="width: {{ homework_rate }}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Graphique : Moyennes par Matière -->
+    <div class="col-lg-6 mb-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h6 class="font-weight-bold mb-0"><i class="fas fa-chart-bar mr-2 text-primary"></i>Moyennes par Matière</h6>
+            </div>
+            <div class="card-body p-4">
+                <canvas id="subjectChart" height="150"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Graphique : Historique des Quiz -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h6 class="font-weight-bold mb-0"><i class="fas fa-history mr-2 text-success"></i>Historique des derniers Quiz (%)</h6>
+            </div>
+            <div class="card-body p-4">
+                <canvas id="quizHistoryChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Assiduité Pie Chart -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+            <div class="card-header bg-white border-0 pt-4 px-4">
+                <h6 class="font-weight-bold mb-0"><i class="fas fa-calendar-check mr-2 text-warning"></i>Détail Assiduité</h6>
+            </div>
+            <div class="card-body p-4 text-center">
+                <canvas id="attendancePieChart"></canvas>
+                <div class="mt-4 small text-muted">
+                    <span class="mr-3"><i class="fas fa-circle text-success small mr-1"></i> Présent</span>
+                    <span><i class="fas fa-circle text-danger small mr-1"></i> Absent</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts pour Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // 1. Chart Matières (Bar)
+    const ctxSubject = document.getElementById('subjectChart').getContext('2d');
+    new Chart(ctxSubject, {
+        type: 'bar',
+        data: {
+            labels: [{% for g in grades_by_subject %}"{{ g.subject__name }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Moyenne / 20',
+                data: [{% for g in grades_by_subject %}{{ g.average|stringformat:".2f" }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                backgroundColor: 'rgba(79, 70, 229, 0.6)',
+                borderColor: 'rgba(79, 70, 229, 1)',
+                borderWidth: 1,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, max: 20 } },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // 2. Chart Quiz History (Line)
+    const ctxQuiz = document.getElementById('quizHistoryChart').getContext('2d');
+    new Chart(ctxQuiz, {
+        type: 'line',
+        data: {
+            labels: [{% for q in quiz_history %}"{{ q.quiz.title|truncatechars:10 }}"{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Score %',
+                data: [{% for q in quiz_history %}{{ q.score }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                fill: true,
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                borderColor: 'rgba(16, 185, 129, 1)',
+                tension: 0.4,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, max: 100 } }
+        }
+    });
+
+    // 3. Attendance Pie Chart
+    const ctxAtt = document.getElementById('attendancePieChart').getContext('2d');
+    new Chart(ctxAtt, {
+        type: 'doughnut',
+        data: {
+            labels: ['Présent', 'Absent'],
+            datasets: [{
+                data: [{{ present_count }}, {{ absent_count }}],
+                backgroundColor: ['#10b981', '#ef4444'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            cutout: '70%',
+            plugins: { legend: { display: false } }
+        }
+    });
+</script>
+
+<style>
+    .bg-grad-one { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    .opacity-80 { opacity: 0.8; }
+    .card { transition: transform 0.2s ease; }
+    .card:hover { transform: translateY(-5px); }
+</style>
+{% endblock %}

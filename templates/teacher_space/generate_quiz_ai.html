@@ -1,0 +1,108 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h3 class="font-weight-bold">🤖 Générateur de Quiz <span class="text-primary">IA</span></h3>
+        <p class="text-muted small">Créez des évaluations intelligentes en quelques secondes.</p>
+    </div>
+</div>
+
+{% if not preview %}
+<!-- ÉTAPE 1 : ENTREE -->
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 20px;">
+            <div class="card-body p-5 text-center">
+                <div class="mb-4">
+                    <i class="fas fa-robot fa-4x text-primary mb-3"></i>
+                    <h5>Sur quel sujet voulez-vous interroger vos élèves ?</h5>
+                    <p class="text-muted small">Décrivez le sujet ou collez un extrait de votre cours.</p>
+                </div>
+                
+                <form method="POST" id="ai-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="generate">
+                    <textarea name="topic" class="form-control mb-4 p-3" rows="5" 
+                        placeholder="Ex: Les causes de la Seconde Guerre Mondiale, ou Le cycle de l'eau..." required
+                        style="border-radius: 15px; border: 2px dashed #dee2e6;"></textarea>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg px-5 shadow" id="btn-generate" style="border-radius: 12px;">
+                        <i class="fas fa-magic mr-2"></i> Générer le Quiz
+                    </button>
+                    
+                    <div id="loading" class="mt-4 d-none">
+                        <div class="spinner-border text-primary mb-2" role="status"></div>
+                        <p class="small text-primary font-weight-bold animate__animated animate__pulse animate__infinite">
+                            L'IA analyse votre contenu...
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- ÉTAPE 2 : REVUE -->
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save">
+    <input type="hidden" name="topic" value="{{ topic }}">
+    <input type="hidden" name="q_count" value="{{ questions|length }}">
+
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h5 class="font-weight-bold">✨ Aperçu des questions générées pour : <span class="text-primary">{{ topic }}</span></h5>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-success shadow-sm px-4" style="border-radius: 10px;">
+                <i class="fas fa-check-circle mr-2"></i> Valider et Publier
+            </button>
+        </div>
+    </div>
+
+    {% for question in questions %}
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+        <div class="card-body p-4">
+            <div class="form-group mb-3">
+                <label class="font-weight-bold small text-muted">Question {{ forloop.counter }}</label>
+                <input type="text" name="q_{{ forloop.counter0 }}_text" class="form-control font-weight-bold" 
+                    value="{{ question.text }}" style="border-radius: 8px;">
+            </div>
+            
+            <div class="row">
+                {% for choice_text, is_correct in question.choices %}
+                <div class="col-md-6 mb-2">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text bg-white border-right-0">
+                                <input type="radio" name="q_{{ forloop.parentloop.counter0 }}_correct" 
+                                    value="{{ forloop.counter0 }}" {% if is_correct %}checked{% endif %}>
+                            </div>
+                        </div>
+                        <input type="text" name="q_{{ forloop.parentloop.counter0 }}_c_{{ forloop.counter0 }}" 
+                            class="form-control border-left-0" value="{{ choice_text }}" style="border-radius: 0 8px 8px 0;">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</form>
+{% endif %}
+
+<script>
+    document.getElementById('ai-form').addEventListener('submit', function() {
+        document.getElementById('btn-generate').classList.add('d-none');
+        document.getElementById('loading').classList.remove('d-none');
+    });
+</script>
+
+<style>
+    .bg-white-20 { background: rgba(255,255,255,0.2); }
+    textarea:focus { border-color: #4f46e5 !important; box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.1); }
+</style>
+{% endblock %}

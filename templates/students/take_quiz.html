@@ -1,0 +1,61 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-9 mx-auto">
+        <div class="card shadow-sm border-0" style="border-radius: 20px;">
+            <div class="card-header bg-white border-0 py-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0 font-weight-bold text-primary">
+                    <i class="fas fa-edit mr-2"></i> Évaluation : {{ quiz.title }}
+                </h5>
+                <div class="small text-muted font-weight-bold px-3 py-2 bg-light rounded-pill">
+                    <i class="far fa-clock mr-2"></i> Temps estimé : 15 min
+                </div>
+            </div>
+            <div class="card-body px-5 pb-5">
+                <form id="quiz-form" method="post">
+                    {% csrf_token %}
+                    {% for question in quiz.questions.all %}
+                    <div class="question-container mb-5 p-4 rounded-lg bg-light" style="border: 1px solid #efefef;">
+                        <h6 class="font-weight-bold mb-3 d-flex align-items-start">
+                            <span class="badge badge-primary mr-3 mt-1" style="min-width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ forloop.counter }}</span>
+                            <span style="font-size: 16px; line-height: 1.5; color: #333;">{{ question.text }}</span>
+                        </h6>
+                        <div class="choices mt-3 pl-5">
+                            {% for choice in question.choices.all %}
+                            <div class="custom-control custom-radio mb-3">
+                                <input type="radio" id="choice_{{ choice.id }}" name="question_{{ question.id }}" value="{{ choice.id }}" class="custom-control-input" required>
+                                <label class="custom-control-label pl-2 cursor-pointer" for="choice_{{ choice.id }}" style="font-size: 14px; cursor: pointer; color: #555;">
+                                    {{ choice.text }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="text-right mt-5">
+                        <button type="submit" class="btn btn-primary px-5 py-3 shadow-sm" style="border-radius: 12px; font-weight: 600;">
+                            Soumettre mes Réponses
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #6e52e2;
+        border-color: #6e52e2;
+    }
+    .question-container:hover {
+        background-color: #fff !important;
+        border-color: #6e52e2 !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 10px 20px rgba(110, 82, 226, 0.05);
+    }
+</style>
+{% endblock %}

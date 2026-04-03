@@ -1,7 +1,89 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.db.models import Avg
 from .models import Student , Parent
+from teacher_space.models import Grade, Attendance
+from academic.models import CourseSessionLog, Quiz, Question, Choice, StudentQuizAttempt, HomeworkSubmission, Appointment
+from academic.forms import HomeworkSubmissionForm, AppointmentForm
+from home_auth.models import Notification
+
+@login_required
+def book_appointment_view(request):
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux parents/étudiants.")
+        return redirect('dashboard')
+        
+    parent = request.user.student_profile.parent
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.parent = parent
+            appointment.save()
+            
+            # --- Notification for Teacher ---
+            Notification.objects.create(
+                user=appointment.teacher.user,
+                title="Nouveau Rendez-vous",
+                message=f"Le parent de {request.user.student_profile.first_name} a demandé un RDV le {appointment.date}.",
+                category='contact',
+                link='/teacher/appointments/'
+            )
+            
+            messages.success(request, "Demande de rendez-vous envoyée avec succès !")
+            return redirect('dashboard')
+    else:
+        form = AppointmentForm()
+    
+    return render(request, 'students/book_appointment.html', {'form': form})
+
+@login_required
+def student_appointments_view(request):
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux parents/étudiants.")
+        return redirect('dashboard')
+        
+    parent = request.user.student_profile.parent
+    appointments = Appointment.objects.filter(parent=parent).order_by('-date', 'time_slot')
+    return render(request, 'students/appointments_list.html', {'appointments': appointments})
+
+@login_required
+def student_performance_view(request):
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('dashboard')
+        
+    student = request.user.student_profile
+    
+    # 1. Moyennes par Matière
+    grades_by_subject = Grade.objects.filter(student=student).values('subject__name').annotate(average=Avg('score'))
+    
+    # 2. Taux d'Assiduité
+    total_attendance = Attendance.objects.filter(student=student).count()
+    present_count = Attendance.objects.filter(student=student, status='Present').count()
+    attendance_rate = (present_count / total_attendance * 100) if total_attendance > 0 else 0
+    
+    # 3. Historique des Quiz
+    quiz_history = StudentQuizAttempt.objects.filter(student=student).order_by('-completed_at')[:10]
+    
+    # 4. Devoirs soumis / total devoirs
+    total_homeworks = CourseSessionLog.objects.exclude(homework='').count() # Estimation simple
+    submitted_homeworks = HomeworkSubmission.objects.filter(student=student).count()
+    homework_rate = (submitted_homeworks / total_homeworks * 100) if total_homeworks > 0 else 0
+    
+    context = {
+        'student': student,
+        'grades_by_subject': grades_by_subject,
+        'attendance_rate': attendance_rate,
+        'present_count': present_count,
+        'absent_count': total_attendance - present_count,
+        'quiz_history': quiz_history,
+        'homework_rate': homework_rate,
+    }
+    
+    return render(request, 'students/performance.html', context)
 
 def add_student(request):
     if request.method == 'POST':
@@ -149,3 +231,76 @@ def delete_student(request, student_id):
     
     # 4. On redirige vers la liste des étudiants
     return redirect('student_list')
+
+def student_session_logs_view(request):
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('dashboard')
+    
+    student = request.user.student_profile
+    # Filter logs by the student's class
+    logs = CourseSessionLog.objects.filter(class_name=student.student_class).order_by('-date')
+    return render(request, 'students/session_logs.html', {'logs': logs})
+
+def student_quiz_list_view(request):
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('dashboard')
+    
+    student = request.user.student_profile
+    # Quizzes for the student's subjects/class
+    quizzes = Quiz.objects.all() # Simplified, could be filtered by subject
+    return render(request, 'students/quiz_list.html', {'quizzes': quizzes})
+
+def take_quiz_view(request, quiz_id):
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('dashboard')
+    
+    student = request.user.student_profile
+    quiz = get_object_or_404(Quiz, id=quiz_id)
+    
+    if request.method == 'POST':
+        score = 0
+        total_questions = quiz.questions.count()
+        
+        for question in quiz.questions.all():
+            selected_choice_id = request.POST.get(f'question_{question.id}')
+            if selected_choice_id:
+                selected_choice = Choice.objects.get(id=selected_choice_id)
+                if selected_choice.is_correct:
+                    score += 1
+        
+        final_score = (score / total_questions) * 20 if total_questions > 0 else 0
+        StudentQuizAttempt.objects.create(student=student, quiz=quiz, score=final_score)
+        
+        messages.success(request, f"Quiz terminé ! Votre score est de {final_score:.2f}/20")
+        return redirect('student_quiz_list')
+        
+    return render(request, 'students/take_quiz.html', {'quiz': quiz})
+
+@login_required
+def submit_homework_view(request, log_id):
+    session_log = get_object_or_404(CourseSessionLog, id=log_id)
+    # Check if student profile exists
+    if not hasattr(request.user, 'student_profile'):
+        messages.error(request, "Accès réservé aux étudiants.")
+        return redirect('dashboard')
+        
+    student = request.user.student_profile
+    if request.method == 'POST':
+        form = HomeworkSubmissionForm(request.POST, request.FILES)
+        if form.is_valid():
+            submission = form.save(commit=False)
+            submission.student = student
+            submission.session_log = session_log
+            submission.save()
+            messages.success(request, "Travail soumis avec succès !")
+            return redirect('student_session_logs')
+    else:
+        form = HomeworkSubmissionForm()
+    
+    return render(request, 'students/submit_homework.html', {
+        'form': form,
+        'session_log': session_log
+    })

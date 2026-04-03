@@ -7,13 +7,16 @@ from django.views.decorators.csrf import csrf_exempt
 from student.models import Student
 from teachers.models import Teacher
 from departments.models import Department
-from academic.models import Exam, TimeTable
+from academic.models import Exam, TimeTable, Quiz, CourseSessionLog, Appointment, HomeworkSubmission
 from subjects.models import Subject
 from .models import Notification
 from teacher_space.models import Attendance, Grade
+from teacher_space.services import TeacherDashboardService
 from django.db.models import Count, Q
 import json
 import datetime
+from datetime import date, timedelta
+from library.models import BookBorrowing
 
 @csrf_exempt 
 
@@ -167,14 +170,21 @@ def dashboard_view(request):
     elif request.user.groups.filter(name='Enseignant').exists():
         # ── TEACHER DASHBOARD ──
         teacher = getattr(request.user, 'teacher_profile', None)
+        today = datetime.date.today()
         
         my_subjects = Subject.objects.filter(teacher=teacher)
         my_classes = my_subjects.values_list('class_name', flat=True).distinct()
         my_students_count = Student.objects.filter(student_class__in=my_classes).count()
         
+        # --- Services Layer ---
+        dashboard_service = TeacherDashboardService()
+        today_stats = dashboard_service.get_todays_summary(teacher, today)
+        alerts_data = dashboard_service.get_teacher_alerts(teacher, today)
+        
         # Latest grades for MY subjects
         latest_grades = Grade.objects.filter(subject__in=my_subjects).select_related('student', 'subject').order_by('-date_recorded')[:10]
         
+        # --- Context Builder ---
         context = {
             'role': 'teacher',
             'teacher': teacher,
@@ -184,6 +194,13 @@ def dashboard_view(request):
             'my_classes_count': len(my_classes),
             'latest_grades': latest_grades,
             'notifications': notifications,
+            'today_stats': today_stats,
+            'alerts': alerts_data,
+            'counters': {
+                'quizzes': Quiz.objects.filter(teacher=teacher).count(),
+                'availabilities': teacher.availabilities.count() if teacher else 0,
+                'notes_today': today_stats.get('notes_today', 0),
+            }
         }
         return render(request, 'dashboard.html', context)
 

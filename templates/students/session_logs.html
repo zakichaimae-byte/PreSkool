@@ -1,0 +1,79 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h4 class="font-weight-bold"><i class="fas fa-book-reader mr-2 text-primary"></i> Mon Cahier de Texte Numérique</h4>
+        <p class="text-muted">Suivez la progression des cours et consultez vos devoirs à faire.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="timeline" style="position: relative; padding: 20px 0;">
+            {% for log in logs %}
+            <div class="timeline-item mb-5" style="position: relative; padding-left: 50px;">
+                <div class="timeline-marker" style="
+                    position: absolute; left: 0; top: 0; width: 20px; height: 20px;
+                    border-radius: 50%; background: #6e52e2; border: 4px solid #e9d5ff;
+                "></div>
+                {% if not forloop.last %}
+                <div class="timeline-line" style="
+                    position: absolute; left: 9px; top: 20px; width: 2px; height: calc(100% + 30px); background: #eee;
+                "></div>
+                {% endif %}
+                
+                <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                    <div class="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                        <h6 class="font-weight-bold mb-0 text-primary">{{ log.subject.name }}</h6>
+                        <span class="badge badge-light px-3 py-2" style="border-radius: 10px;">{{ log.date|date:"d F Y" }}</span>
+                    </div>
+                    <div class="card-body px-4 pb-4">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6 class="small font-weight-bold text-muted text-uppercase mb-2">Résumé de la séance</h6>
+                                <p class="mb-4" style="line-height: 1.6; color: #444;">{{ log.summary }}</p>
+
+                                {% if log.homework %}
+                                <div class="mt-3 p-3 bg-light rounded-lg border-left border-primary" style="border-width: 4px !important;">
+                                    <h6 class="font-weight-bold text-primary mb-2 small"><i class="fas fa-pencil-alt mr-2"></i>DEVOIRS :</h6>
+                                    <p class="mb-0 text-dark" style="font-size: 13px;">{{ log.homework }}</p>
+                                    <div class="mt-3">
+                                        <a href="{% url 'submit_homework' log.id %}" class="btn btn-sm btn-outline-primary px-3 shadow-sm" style="border-radius: 8px;">
+                                            <i class="fas fa-upload mr-2"></i>Soumettre mon travail
+                                        </a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 text-center border-left">
+                                {% if log.attachment %}
+                                <h6 class="small font-weight-bold text-muted text-uppercase mb-3">Support de cours</h6>
+                                <a href="{{ log.attachment.url }}" class="btn btn-outline-primary btn-sm px-4" style="border-radius: 10px;" target="_blank">
+                                    <i class="fas fa-file-download mr-2"></i> Télécharger
+                                </a>
+                                {% else %}
+                                <div class="py-4">
+                                    <i class="fas fa-file-excel fa-2x text-light mb-2"></i>
+                                    <p class="small text-muted mb-0">Aucun fichier joint</p>
+                                </div>
+                                {% endif %}
+                                <div class="mt-4 pt-3 border-top">
+                                    <p class="small text-muted mb-0">Par M. {{ log.teacher.last_name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="fas fa-history fa-3x text-light mb-3"></i>
+                <h5 class="text-muted">Aucun cours enregistré pour le moment.</h5>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

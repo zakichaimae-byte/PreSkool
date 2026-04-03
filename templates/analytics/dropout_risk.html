@@ -1,0 +1,99 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h4 class="font-weight-bold ml-2">Analyse Prédictive : <span class="text-primary">Risque de Décrochage</span></h4>
+        <p class="text-muted ml-2">Algorithme basé sur les résultats académiques et l'assiduité en temps réel.</p>
+    </div>
+    <div class="col-md-4 text-right pt-2">
+        <div class="badge badge-soft-info p-3 border-0" style="border-radius: 12px;">
+            <i class="fas fa-microchip mr-2 text-primary"></i> Modèle IA : Heuristique v1.2
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0" style="border-radius: 20px; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="bg-light">
+                        <tr class="text-uppercase small font-weight-bold text-muted">
+                            <th class="py-4 pl-4">Étudiant</th>
+                            <th class="py-4 text-center">Moyenne / 20</th>
+                            <th class="py-4 text-center">Taux d'Absence</th>
+                            <th class="py-4 text-center">Score de Risque</th>
+                            <th class="py-4 text-center">Statut d'Alerte</th>
+                            <th class="py-4 pr-4">Action recommandée</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for res in results %}
+                        <tr>
+                            <td class="pl-4 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar avatar-sm mr-3">
+                                        <img src="{% if res.student.student_image %}{{ res.student.student_image.url }}{% else %}{% static 'assets/img/profiles/Jaaouani.jpeg' %}{% endif %}" class="rounded-circle" width="40" height="40" alt="Student">
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 font-weight-bold">{{ res.student.first_name }} {{ res.student.last_name }}</h6>
+                                        <span class="small text-muted">{{ res.student.student_class }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center font-weight-bold">
+                                <span class="{% if res.avg_grade < 10 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ res.avg_grade }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="progress mt-2" style="height: 6px; border-radius: 10px; width: 80px; margin: 0 auto;">
+                                    <div class="progress-bar bg-info" style="width: {{ res.absence_rate }}%;"></div>
+                                </div>
+                                <span class="small text-muted d-block mt-1">{{ res.absence_rate }}%</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="d-inline-flex align-items-center justify-content-center" style="width: 50px; height: 50px; border-radius: 50%; border: 3px solid #eee; position: relative;">
+                                    <span class="small font-weight-bold">{{ res.risk_score }}%</span>
+                                    <svg width="50" height="50" style="position: absolute; top: -3px; left: -3px; transform: rotate(-90deg);">
+                                        <circle cx="25" cy="25" r="22" stroke="{% if res.risk_score >= 70 %}#dc3545{% elif res.risk_score >= 40 %}#ffc107{% else %}#28a745{% endif %}" stroke-width="3" fill="transparent" stroke-dasharray="138" stroke-dashoffset="{{ 138|add:res.risk_score|add:"-100" }}" />
+                                    </svg>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge badge-pill badge-{{ res.color }} px-3 py-2" style="font-size: 11px; letter-spacing: 0.3px;">
+                                    {{ res.status|upper }}
+                                </span>
+                            </td>
+                            <td class="pr-4">
+                                {% if res.status == 'Critique' %}
+                                    <button class="btn btn-sm btn-danger px-3" style="border-radius: 8px;">Convoquer Parents</button>
+                                {% elif res.status == 'À surveiller' %}
+                                    <button class="btn btn-sm btn-warning px-3" style="border-radius: 8px;">Soutien Scolaire</button>
+                                {% else %}
+                                    <button class="btn btn-sm btn-light px-3" style="border-radius: 8px;">Suivi Standard</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .badge-soft-info { background-color: rgba(24, 174, 250, 0.1); color: #18aefa; }
+    .badge-soft-danger { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .badge-soft-warning { background-color: rgba(255, 193, 7, 0.1); color: #ffc107; }
+    .badge-soft-success { background-color: rgba(40, 167, 69, 0.1); color: #28a745; }
+    
+    .table-hover tbody tr:hover {
+        background-color: #fbfbfb;
+        transition: background-color 0.2s;
+    }
+</style>
+{% endblock %}

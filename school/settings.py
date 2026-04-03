@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'events',
     'library',
     'teacher_space',
+    'chatbot',
+    'analytics',
 ]
 
 MIDDLEWARE = [

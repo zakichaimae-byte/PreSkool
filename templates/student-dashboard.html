@@ -15,33 +15,110 @@
     </div>
 </div>
 
+<div class="row mb-5">
+    <div class="col-12">
+        <h5 class="font-weight-bold mb-4"><i class="fas fa-rocket text-primary mr-2"></i>Mes Services Digitaux</h5>
+    </div>
+    
+    <!-- Cahier de Texte -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #0fb478, #078a5b); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-book-reader fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-book-open"></i></div>
+                <h6 class="font-weight-bold mb-1">Cahier de Texte</h6>
+                <p class="small opacity-80 mb-3">Consultez vos cours & devoirs</p>
+                <a href="{% url 'student_session_logs' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #1e90ff, #1c75d4); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-question-circle fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-vial"></i></div>
+                <h6 class="font-weight-bold mb-1">Mes Quiz</h6>
+                <p class="small opacity-80 mb-3">Évaluations interactives</p>
+                <a href="{% url 'student_quiz_list' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Passer un Quiz</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RDV -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #f39c12, #d35400); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-calendar-alt fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-calendar-check"></i></div>
+                <h6 class="font-weight-bold mb-1">Mes RDV</h6>
+                <p class="small opacity-80 mb-3">Rencontrez vos professeurs</p>
+                <a href="{% url 'student_appointments' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Gérer mes RDV</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #8e44ad, #732d91); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-chart-line fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-chart-pie"></i></div>
+                <h6 class="font-weight-bold mb-1">Ma Performance</h6>
+                <p class="small opacity-80 mb-3">Analyse IA de vos résultats</p>
+                <a href="{% url 'student_performance' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Mon Analyse</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bibliothèque -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #34495e, #2c3e50); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-book fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-book-reader"></i></div>
+                <h6 class="font-weight-bold mb-1">Bibliothèque</h6>
+                <p class="small opacity-80 mb-3">Rechercher & Emprunter</p>
+                <a href="{% url 'book_list' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Voir les livres</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-white-20 { background: rgba(255,255,255,0.2); }
+    .icon-box-sm { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .btn-light:hover { background: #f8f9fa !important; transform: scale(1.02); }
+</style>
+
 <div class="row">
-    <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-one w-100 shadow-sm border-0">
+    <div class="col-xl-3 col-sm-6 col-12 d-flex mb-4">
+        <div class="card bg-one w-100 shadow-sm border-0" style="border-radius: 15px;">
             <div class="card-body">
                 <div class="db-widgets d-flex justify-content-between align-items-center">
                     <div class="db-info">
-                        <h6>Mes Matières</h6>
-                        <h3 class="font-weight-bold">{{ subjects_count }}</h3>
+                        <h6 class="text-white opacity-80 small mb-1">Mes Matières</h6>
+                        <h3 class="font-weight-bold text-white mb-0">{{ subjects_count }}</h3>
                     </div>
-                    <div class="db-icon">
-                        <i class="fas fa-book-reader fa-2x opacity-50"></i>
+                    <div class="db-icon text-white opacity-30">
+                        <i class="fas fa-book-reader fa-2x"></i>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="col-xl-3 col-sm-6 col-12 d-flex">
-        <div class="card bg-two w-100 shadow-sm border-0">
+    <div class="col-xl-3 col-sm-6 col-12 d-flex mb-4">
+        <div class="card bg-two w-100 shadow-sm border-0" style="border-radius: 15px;">
             <div class="card-body">
                 <div class="db-widgets d-flex justify-content-between align-items-center">
                     <div class="db-info">
-                        <h6>ID Étudiant</h6>
-                        <h3 class="font-weight-bold">{{ student.student_id }}</h3>
+                        <h6 class="text-white opacity-80 small mb-1">ID Étudiant</h6>
+                        <h3 class="font-weight-bold text-white mb-0">{{ student.student_id }}</h3>
                     </div>
-                    <div class="db-icon">
-                        <i class="fas fa-id-card fa-2x opacity-50"></i>
+                    <div class="db-icon text-white opacity-30">
+                        <i class="fas fa-id-card fa-2x"></i>
                     </div>
                 </div>
             </div>

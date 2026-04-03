@@ -1,0 +1,52 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm border-0" style="border-radius: 20px; border-bottom: 5px solid #00c6ff;">
+            <div class="card-header bg-white border-0 py-4 px-4 text-center">
+                <div class="icon-box bg-soft-primary mx-auto mb-3" style="width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-calendar-check fa-2x text-primary"></i>
+                </div>
+                <h4 class="card-title mb-0 font-weight-bold">Prendre Rendez-vous</h4>
+                <p class="text-muted small mt-2">Réservez un créneau pour discuter avec un enseignant.</p>
+            </div>
+            <div class="card-body px-5 pb-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-12 mb-4">
+                            <label class="font-weight-bold ml-1 small">Choisir l'Enseignant</label>
+                            {{ form.teacher }}
+                            <div id="avail-info" class="mt-2 small text-info"></div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold ml-1 small">Date du RDV</label>
+                            {{ form.date }}
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold ml-1 small">Heure Souhaitée</label>
+                            {{ form.time_slot }}
+                        </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="font-weight-bold ml-1 small">Message ou Objet du RDV</label>
+                            {{ form.message }}
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary px-5 py-3 shadow-md" style="border-radius: 15px; font-weight: 600; background: linear-gradient(135deg, #00c6ff, #0072ff);">
+                            Envoyer la demande de RDV
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-soft-primary { background-color: rgba(0, 198, 255, 0.1); }
+</style>
+{% endblock %}

@@ -2,53 +2,104 @@
 {% load static %}
 
 {% block body %}
-<div class="page-header">
-    <div class="row align-items-center">
-        <div class="col">
-            <h3 class="page-title">Bibliothèque</h3>
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Tableau de bord</a></li>
-                <li class="breadcrumb-item active">Livres</li>
-            </ul>
-        </div>
-        <div class="col-auto text-right float-right ml-auto">
-            <a href="{% url 'book_add' %}" class="btn btn-primary"><i class="fas fa-plus"></i></a>
-        </div>
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h3 class="font-weight-bold">📚 Notre <span class="text-primary">Bibliothèque</span></h3>
+        <p class="text-muted small">Recherchez et empruntez des ressources académiques.</p>
+    </div>
+    {% if user.is_superuser %}
+    <div class="col-auto text-right">
+        <a href="{% url 'book_add' %}" class="btn btn-primary px-4 shadow-sm" style="border-radius: 10px;">
+            <i class="fas fa-plus mr-2"></i> Ajouter un Livre
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Barre de Recherche -->
+<div class="card border-0 shadow-sm mb-4" style="border-radius: 15px;">
+    <div class="card-body">
+        <form method="GET" action="{% url 'book_list' %}" class="row g-3 align-items-center">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-white border-right-0"><i class="fas fa-search text-muted"></i></span>
+                    </div>
+                    <input type="text" name="q" class="form-control border-left-0" placeholder="Titre, auteur ou ISBN..." value="{{ query|default:'' }}">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="category" class="form-control">
+                    <option value="">Toutes les catégories</option>
+                    <option value="scientific" {% if category_filter == 'scientific' %}selected{% endif %}>Scientifique</option>
+                    <option value="literary" {% if category_filter == 'literary' %}selected{% endif %}>Littéraire</option>
+                    <option value="historical" {% if category_filter == 'historical' %}selected{% endif %}>Historique</option>
+                    <option value="artistic" {% if category_filter == 'artistic' %}selected{% endif %}>Artistique</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-primary btn-block" style="border-radius: 8px;">Filtrer</button>
+            </div>
+        </form>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-sm-12">
-        <div class="card card-table">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-center mb-0 datatable">
-                        <thead>
-                            <tr>
-                                <th>Titre</th>
-                                <th>Auteur</th>
-                                <th>ISBN</th>
-                                <th>Quantité Totale</th>
-                                <th>Disponible</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for book in books %}
-                            <tr>
-                                <td>{{ book.title }}</td>
-                                <td>{{ book.author }}</td>
-                                <td>{{ book.isbn|default:"-" }}</td>
-                                <td>{{ book.quantity }}</td>
-                                <td>{{ book.available_quantity }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="5" class="text-center">Aucun livre dans la bibliothèque.</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+    <div class="col-md-12">
+        <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden;">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                        <tr class="small font-weight-bold text-muted">
+                            <th class="py-3 pl-4">Livre</th>
+                            <th class="py-3">Catégorie</th>
+                            <th class="py-3 text-center">Quantité</th>
+                            <th class="py-3 text-center">Disponibilité</th>
+                            <th class="py-3 pr-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td class="pl-4 py-3 align-middle">
+                                <h6 class="mb-0 font-weight-bold">{{ book.title }}</h6>
+                                <span class="small text-muted">{{ book.author }}</span>
+                            </td>
+                            <td class="align-middle">
+                                <span class="badge badge-pill badge-light px-3 py-1 text-info small">
+                                    {{ book.get_category_display }}
+                                </span>
+                            </td>
+                            <td class="text-center align-middle small text-muted">
+                                {{ book.available_quantity }} / {{ book.quantity }}
+                            </td>
+                            <td class="text-center align-middle">
+                                {% if book.available_quantity > 0 %}
+                                <span class="badge badge-success px-3 py-1" style="border-radius: 8px; font-size: 10px;">EN STOCK</span>
+                                {% else %}
+                                <span class="badge badge-danger px-3 py-1" style="border-radius: 8px; font-size: 10px;">ÉPUISÉ</span>
+                                {% endif %}
+                            </td>
+                            <td class="pr-4 text-right align-middle">
+                                {% if user.student_profile %}
+                                    {% if book.available_quantity > 0 %}
+                                    <a href="{% url 'borrow_book' book.id %}" class="btn btn-sm btn-outline-primary px-3" style="border-radius: 8px;">Emprunter</a>
+                                    {% endif %}
+                                {% elif user.is_superuser %}
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-outline-secondary mx-1" style="border-radius: 8px;"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger mx-1" style="border-radius: 8px;"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5 text-muted small">Aucun livre ne correspond à votre recherche.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
