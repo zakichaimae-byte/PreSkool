@@ -1,9 +1,10 @@
 from datetime import date, timedelta
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Avg
 from academic.models import CourseSessionLog, Appointment, Quiz, HomeworkSubmission, TimeTable
 from teacher_space.models import Attendance, Grade
 from library.models import BookBorrowing
 from subjects.models import Subject
+from student.models import Student
 
 class TeacherDashboardService:
     """
@@ -120,3 +121,106 @@ class TeacherDashboardService:
             ])
             
         return output.getvalue(), subject.name
+
+    @staticmethod
+    def get_performance_trends(teacher):
+        """
+        Calculates the performance progression of the teacher's classes.
+        Compares this week's averages to last week's.
+        """
+        import datetime
+        from django.db.models import Avg
+        today = date.today()
+        # Week starts on Monday
+        start_of_week = today - timedelta(days=today.weekday())
+        last_week_start = start_of_week - timedelta(days=7)
+        
+        this_week_avg = Grade.objects.filter(
+            subject__teacher=teacher,
+            date_recorded__gte=start_of_week
+        ).aggregate(Avg('score'))['score__avg'] or 0
+        
+        last_week_avg = Grade.objects.filter(
+            subject__teacher=teacher,
+            date_recorded__gte=last_week_start,
+            date_recorded__lt=start_of_week
+        ).aggregate(Avg('score'))['score__avg'] or 0
+        
+        trend = 0
+        if last_week_avg > 0:
+            trend = ((float(this_week_avg) - float(last_week_avg)) / float(last_week_avg)) * 100
+            
+        return {
+            'this_week': round(float(this_week_avg), 2),
+            'last_week': round(float(last_week_avg), 2),
+            'trend': round(float(trend), 1),
+            'status': 'up' if trend >= 0 else 'down'
+        }
+
+    @staticmethod
+    def get_top_performing_students(teacher, limit=5):
+        """Calculates top students for the teacher's subjects based on average grades."""
+        my_classes = Subject.objects.filter(teacher=teacher).values_list('class_name', flat=True).distinct()
+        
+        top_students = Student.objects.filter(student_class__in=my_classes).annotate(
+            avg_score=Avg('grades__score', filter=Q(grades__subject__teacher=teacher))
+        ).filter(avg_score__isnull=False).order_by('-avg_score')[:limit]
+        
+        return top_students
+
+    @staticmethod
+    def get_at_risk_students(teacher, limit=5):
+        """
+        Identifies students at risk based on:
+        - Avg grade < 10
+        - Absence rate > 15%
+        Calculated in pure Python/Django ORM.
+        """
+        my_classes = Subject.objects.filter(teacher=teacher).values_list('class_name', flat=True).distinct()
+        students = Student.objects.filter(student_class__in=my_classes)
+        
+        risk_list = []
+        for student in students:
+            avg = Grade.objects.filter(student=student, subject__teacher=teacher).aggregate(Avg('score'))['score__avg'] or 0
+            total_attr = Attendance.objects.filter(student=student, teacher=teacher).count()
+            absences = Attendance.objects.filter(student=student, teacher=teacher, status='Absent').count()
+            abs_rate = (absences / total_attr * 100) if total_attr > 0 else 0
+            
+            if avg < 10 or abs_rate > 15:
+                # Calculate simple risk level
+                risk_lvl = 'Critique' if (avg < 8 or abs_rate > 30) else 'À surveiller'
+                risk_list.append({
+                    'student': student,
+                    'avg': round(float(avg), 2),
+                    'abs_rate': round(abs_rate, 1),
+                    'risk_level': risk_lvl,
+                    'color': 'danger' if risk_lvl == 'Critique' else 'warning'
+                })
+                
+        # Sort by worst average
+        risk_list.sort(key=lambda x: x['avg'])
+        return risk_list[:limit]
+
+    @staticmethod
+    def get_chronic_absentees(teacher, limit=5):
+        """
+        Identifies students who have missed more than 3 sessions recently.
+        Demonstrates complex Python list manipulation.
+        """
+        from django.utils import timezone
+        thirty_days_ago = timezone.now() - timedelta(days=30)
+        
+        absentees = Attendance.objects.filter(
+            teacher=teacher, 
+            status='Absent',
+            date__gte=thirty_days_ago
+        ).values('student').annotate(abs_count=Count('id')).filter(abs_count__gte=3).order_by('-abs_count')[:limit]
+        
+        result = []
+        for item in absentees:
+            student = Student.objects.get(id=item['student'])
+            result.append({
+                'student': student,
+                'count': item['abs_count']
+            })
+        return result

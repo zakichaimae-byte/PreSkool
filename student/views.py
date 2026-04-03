@@ -7,6 +7,7 @@ from .models import Student , Parent
 from teacher_space.models import Grade, Attendance
 from academic.models import CourseSessionLog, Quiz, Question, Choice, StudentQuizAttempt, HomeworkSubmission, Appointment
 from academic.forms import HomeworkSubmissionForm, AppointmentForm
+from academic.models import ClassLevel
 from home_auth.models import Notification
 
 @login_required
@@ -150,7 +151,8 @@ def add_student(request):
             return redirect('student_list')
             
     else:
-        return render(request, 'students/add.html')
+        class_levels = ClassLevel.objects.all().order_by('level', 'name')
+        return render(request, 'students/add.html', {'class_levels': class_levels})
 
 def student_list(request):
     students = Student.objects.all()
@@ -213,7 +215,8 @@ def edit_student(request, student_id):
 
     # 3. Si on charge juste la page (méthode GET), on envoie les données pour pré-remplir
     # Remarque comment on envoie 'student' ET 'parent' à ton fichier HTML !
-    return render(request, 'students/edit.html', {'student': student, 'parent': parent})
+    class_levels = ClassLevel.objects.all().order_by('level', 'name')
+    return render(request, 'students/edit.html', {'student': student, 'parent': parent, 'class_levels': class_levels})
 
 def delete_student(request, student_id):
     # 1. On cherche l'étudiant avec cet ID spécifique
@@ -248,8 +251,13 @@ def student_quiz_list_view(request):
         return redirect('dashboard')
     
     student = request.user.student_profile
-    # Quizzes for the student's subjects/class
-    quizzes = Quiz.objects.all() # Simplified, could be filtered by subject
+    quizzes = Quiz.objects.all()
+    
+    # Enrichir les quiz avec l'état de tentative de l'étudiant
+    for quiz in quizzes:
+        attempt = StudentQuizAttempt.objects.filter(student=student, quiz=quiz).first()
+        quiz.my_attempt = attempt
+        
     return render(request, 'students/quiz_list.html', {'quizzes': quizzes})
 
 def take_quiz_view(request, quiz_id):
@@ -260,23 +268,54 @@ def take_quiz_view(request, quiz_id):
     student = request.user.student_profile
     quiz = get_object_or_404(Quiz, id=quiz_id)
     
+    # Vérifier si déjà passé
+    previous_attempt = StudentQuizAttempt.objects.filter(student=student, quiz=quiz).first()
+    
     if request.method == 'POST':
+        if previous_attempt:
+             messages.info(request, f"Vous avez déjà passé ce quiz. Votre score est de {previous_attempt.score:.2f}/20")
+             return redirect('student_quiz_list')
+
         score = 0
         total_questions = quiz.questions.count()
-        
+        questions_with_results = []
         for question in quiz.questions.all():
             selected_choice_id = request.POST.get(f'question_{question.id}')
+            correct_choice = question.choices.filter(is_correct=True).first()
+            
+            is_right = False
             if selected_choice_id:
                 selected_choice = Choice.objects.get(id=selected_choice_id)
                 if selected_choice.is_correct:
                     score += 1
+                    is_right = True
+            
+            # Attacher les résultats directement à l'objet question pour le template
+            question.selected_id = int(selected_choice_id) if selected_choice_id else None
+            question.is_right = is_right
+            questions_with_results.append(question)
         
         final_score = (score / total_questions) * 20 if total_questions > 0 else 0
-        StudentQuizAttempt.objects.create(student=student, quiz=quiz, score=final_score)
+        attempt = StudentQuizAttempt.objects.create(student=student, quiz=quiz, score=final_score)
         
-        messages.success(request, f"Quiz terminé ! Votre score est de {final_score:.2f}/20")
+        context = {
+            'quiz': quiz,
+            'questions': questions_with_results, # Passer les questions annotées
+            'final_score': final_score,
+            'is_result': True
+        }
+        messages.success(request, f"Quiz terminé ! Score : {final_score:.2f}/20")
+        return render(request, 'students/take_quiz.html', context)
+    
+    # Si déjà passé et qu'on accède via GET, on pourrait aussi afficher les résultats ou bloquer
+    if previous_attempt:
+        # On ne peut pas "re-calculer" les résultats exacts car on ne stocke pas les choix individuels dans la DB (V2)
+        # Mais pour cette session, on dira juste qu'il est terminé.
+        # Si on voulait vraiment voir les résultats, il faudrait un modèle StudentAnswer.
+        # Pour l'instant, disons qu'on affiche la note.
+        messages.info(request, f"Ce quiz est déjà terminé. Note : {previous_attempt.score:.2f}/20")
         return redirect('student_quiz_list')
-        
+
     return render(request, 'students/take_quiz.html', {'quiz': quiz})
 
 @login_required

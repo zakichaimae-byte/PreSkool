@@ -58,7 +58,12 @@
                         <div class="col-12 col-sm-6">
                             <div class="form-group">
                                 <label>Classe</label>
-                                <input type="text" name="student_class" class="form-control" required placeholder="ex: 10th">
+                                <select name="student_class" class="form-control" required>
+                                    <option value="">Sélectionner une classe</option>
+                                    {% for class_level in class_levels %}
+                                    <option value="{{ class_level.name }}">{{ class_level.name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6">

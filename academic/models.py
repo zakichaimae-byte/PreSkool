@@ -112,3 +112,10 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"RDV: {self.teacher} - {self.parent} le {self.date}"
+
+class ClassLevel(models.Model):
+    name = models.CharField(max_length=200, help_text="Nom exact pour la base de données (ex: 'Tronc Commun Sciences 1')")
+    level = models.CharField(max_length=50, blank=True, null=True, help_text="Niveau général (ex: 'Tronc Commun')")
+
+    def __str__(self):
+        return self.name

@@ -170,17 +170,20 @@ def generate_quiz_ai_view(request):
             
             return render(request, 'teacher_space/generate_quiz_ai.html', {
                 'topic': topic,
+                'subject_id': subject_id,
                 'questions': questions_data,
                 'preview': True
             })
             
         elif action == 'save':
             topic = request.POST.get('topic')
+            subject_id = request.POST.get('subject_id')
+            subject = Subject.objects.filter(id=subject_id).first() if subject_id else Subject.objects.first()
             # Create Quiz
             quiz = Quiz.objects.create(
                 title=f"Quiz IA : {topic}",
                 teacher=teacher,
-                subject=Subject.objects.first(), # Default or from form
+                subject=subject,
                 due_date=date.today() + timedelta(days=7)
             )
             
@@ -199,7 +202,8 @@ def generate_quiz_ai_view(request):
             messages.success(request, f"Le quiz '{quiz.title}' a été généré et publié avec succès !")
             return redirect('quiz_list_teacher')
             
-    return render(request, 'teacher_space/generate_quiz_ai.html', {'preview': False})
+    subjects = Subject.objects.filter(teacher=teacher) if teacher else Subject.objects.all()
+    return render(request, 'teacher_space/generate_quiz_ai.html', {'preview': False, 'subjects': subjects})
 
 @login_required
 def quiz_list_teacher_view(request):

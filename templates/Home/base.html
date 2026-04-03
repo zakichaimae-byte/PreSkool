@@ -213,7 +213,6 @@
                   </li>
                   <li><a href="{% url 'book_list' %}"><i class="fas fa-book"></i> <span>{{ txt_library }}</span></a></li>
                   <li><a href="{% url 'manage_borrowings' %}"><i class="fas fa-tasks"></i> <span>{{ manage_loans }} (Admin)</span></a></li>
-                  <li><a href="{% url 'dropout_risk' %}"><i class="fas fa-robot text-primary"></i> <span class="text-primary font-weight-bold">{{ ai_analysis }}</span></a></li>
                   <li class="menu-title"><span>Services Digitaux</span></li>
                   <li><a href="{% url 'quiz_list_teacher' %}"><i class="fas fa-question-circle"></i> <span>{{ my_quizzes }} (Admin)</span></a></li>
                   <li><a href="{% url 'session_logs_list' %}"><i class="fas fa-book-open"></i> <span>{{ digital_logbook }} (Admin)</span></a></li>
@@ -338,53 +337,154 @@
       <button id="chatbot-toggle" style="
          width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #18aefa, #6e52e2);
          border: none; color: white; font-size: 24px; cursor: pointer; box-shadow: 0 10px 25px rgba(110, 82, 226, 0.4);
-         transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;
-      ">
-         <i class="fas fa-comment-dots"></i>
+         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center;
+      " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+         <i class="fas fa-robot"></i>
       </button>
 
       <div id="chatbot-window" style="
-         display: none; position: absolute; bottom: 80px; right: 0; width: 350px; height: 500px;
-         background: white; border-radius: 20px; overflow: hidden; flex-direction: column;
-         box-shadow: 0 15px 50px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s ease;
+         display: none; position: absolute; bottom: 80px; right: 0; width: 380px; height: 550px;
+         background: white; border-radius: 24px; overflow: hidden; flex-direction: column;
+         box-shadow: 0 20px 60px rgba(0,0,0,0.2); border: 1px solid rgba(0,0,0,0.08); transition: all 0.4s ease;
       ">
          <!-- Header -->
-         <div style="background: linear-gradient(135deg, #18aefa, #6e52e2); padding: 20px; color: white; display: flex; align-items: center; justify-content: space-between;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-               <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;">
-                  <i class="fas fa-robot"></i>
+         <div style="background: linear-gradient(135deg, #18aefa, #6e52e2); padding: 22px; color: white; display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+               <div style="width: 45px; height: 45px; border-radius: 14px; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+                  <i class="fas fa-microchip" style="font-size: 20px;"></i>
                </div>
                <div>
-                  <h6 style="margin: 0; font-weight: 600;">Assistant PreSkool</h6>
-                  <span style="font-size: 11px; opacity: 0.8;"><i class="fas fa-circle" style="color: #26af48; font-size: 8px; margin-right: 4px;"></i> En ligne</span>
+                  <h6 style="margin: 0; font-weight: 700; letter-spacing: 0.5px;">Assistant IA PreSkool</h6>
+                  <span style="font-size: 11px; opacity: 0.9; display: flex; align-items: center; gap: 5px;">
+                     <span style="width: 8px; height: 8px; background: #26af48; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #26af48;"></span> 
+                     Propulsé par IA • Actif
+                  </span>
                </div>
             </div>
-            <button id="chatbot-close" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.7;"><i class="fas fa-times"></i></button>
+            <button id="chatbot-close" style="background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; width: 32px; height: 32px; border-radius: 50%; transition: 0.3s;"><i class="fas fa-times"></i></button>
          </div>
 
          <!-- Messages Area -->
-         <div id="chatbot-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f8f9fa;">
-            <div style="align-self: flex-start; background: #fff; padding: 12px 16px; border-radius: 15px 15px 15px 0; max-width: 80%; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #333;">
-               Bonjour ! Je suis votre assistant virtuel. Comment puis-je vous aider aujourd'hui ?
+         <div id="chatbot-messages" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; background: #fbfcfe;">
+            <!-- Initial Message -->
+             <div style="align-self: flex-start; background: #fff; padding: 14px 18px; border-radius: 18px 18px 18px 4px; max-width: 85%; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); color: #444; border: 1px solid #f0f0f0;">
+                Bonjour <strong>{% if user.first_name %}{{ user.first_name }}{% else %}{{ user.username }}{% endif %}</strong> ! 👋<br><br>
+                
+                {% if user.is_superuser %}
+                Je suis votre assistant administratif. Voici quelques actions et questions fréquentes pour la gestion de l'école :
+                
+                <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 12px;">
+                   <button class="quick-link" onclick="handleQuickAction('élèves')">👥 Étudiants</button>
+                   <button class="quick-link" onclick="handleQuickAction('profs')">👨‍🏫 Profs</button>
+                   <button class="quick-link" onclick="handleQuickAction('examens')">📝 Examens</button>
+                   <button class="quick-link" onclick="handleQuickAction('status')">📊 Bilan École</button>
+                </div>
+
+                <p style="font-size: 11px; color: #999; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">FAQ Admin :</p>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                   <button class="question-btn" onclick="handleQuickAction('Comment ajouter un élève ?')">➕ Comment ajouter un élève ?</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment ajouter un prof ?')">👨‍🏫 Comment ajouter un prof ?</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment programmer un examen ?')">📝 Comment programmer un examen ?</button>
+                </div>
+                
+                {% elif user.groups.all.0.name == 'Enseignant' or role == 'teacher' %}
+                Je suis votre assistant pédagogique. Voici vos outils rapides et questions fréquentes :
+                
+                <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 12px;">
+                   <button class="quick-link" onclick="handleQuickAction('mes classes')">🏫 Mes Classes</button>
+                   <button class="quick-link" onclick="handleQuickAction('saisir les notes')">📝 Notes</button>
+                   <button class="quick-link" onclick="handleQuickAction('présences')">✅ Présences</button>
+                   <button class="quick-link" onclick="handleQuickAction('mes quiz')">💡 Quiz</button>
+                </div>
+
+                <p style="font-size: 11px; color: #999; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">FAQ Enseignant :</p>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                   <button class="question-btn" onclick="handleQuickAction('Comment saisir les notes ?')">✏️ Saisir les notes</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment enregistrer les présences ?')">📅 Faire l\'appel</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment remplir le cahier de texte ?')">📖 Cahier de texte</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment créer un quiz ?')">💡 Créer un quiz</button>
+                </div>
+                
+                {% elif user.student_profile or role == 'student' %}
+                Bonjour et bienvenue sur PreSkool. Je suis votre assistant étudiant. 👋<br><br>
+                Je peux vous aider à consulter vos cours, votre emploi du temps, vos examens, vos quiz, vos rendez-vous, vos performances et vos emprunts.
+                
+                <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 12px; margin-bottom: 12px;">
+                   <button class="quick-link" onclick="handleQuickAction('mes cours')">📚 Mes Cours</button>
+                   <button class="quick-link" onclick="handleQuickAction('emploi du temps')">📅 Planning</button>
+                   <button class="quick-link" onclick="handleQuickAction('mes examens')">📝 Mes Examens</button>
+                   <button class="quick-link" onclick="handleQuickAction('mes quiz')">💡 Mes Quiz</button>
+                </div>
+
+                <p style="font-size: 11px; color: #999; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Questions fréquentes :</p>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                   <button class="question-btn" onclick="handleQuickAction('Comment consulter mes cours ?')">📖 Comment consulter mes cours ?</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment voir mes cours d\'aujourd\'hui ?')">📅 Mes cours d'aujourd'hui ?</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment voir mes examens ?')">📝 Voir mes examens</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment passer un quiz ?')">💡 Comment passer un quiz ?</button>
+                   <button class="question-btn" onclick="handleQuickAction('Comment consulter le cahier de texte ?')">📓 Voir mes devoirs</button>
+                </div>
+                
+                {% else %}
+                Bienvenue sur PreSkool ! Je peux vous aider à naviguer dans l'application ou répondre à vos questions sur le fonctionnement du système.
+                {% endif %}
+            </div>
+         </div>
+
+         <!-- Typing Indicator (Hidden by default) -->
+         <div id="typing-indicator" style="display: none; padding: 10px 20px; align-self: flex-start;">
+            <div style="background: #fff; padding: 10px 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); display: flex; gap: 4px;">
+               <span class="dot"></span><span class="dot"></span><span class="dot"></span>
             </div>
          </div>
 
          <!-- Input Area -->
-         <div style="padding: 15px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px;">
-            <input type="text" id="chatbot-input" placeholder="Écrivez votre message..." style="
-               flex: 1; border: 1px solid #e1e1e1; border-radius: 25px; padding: 8px 18px; outline: none; font-size: 14px;
-            ">
+         <div style="padding: 20px; background: white; border-top: 1px solid #f0f0f0; display: flex; gap: 12px; align-items: center;">
+            <div style="flex: 1; position: relative;">
+               <input type="text" id="chatbot-input" placeholder="Poser une question..." style="
+                  width: 100%; border: 1.5px solid #ececf1; border-radius: 16px; padding: 12px 18px; outline: none; font-size: 14px; transition: 0.3s;
+               " onfocus="this.style.borderColor='#6e52e2'; this.style.boxShadow='0 0 0 3px rgba(110, 82, 226, 0.1)'" onblur="this.style.borderColor='#ececf1'; this.style.boxShadow='none'">
+            </div>
             <button id="chatbot-send" style="
-               width: 38px; height: 38px; border-radius: 50%; background: #6e52e2; border: none; color: white; cursor: pointer;
-               display: flex; align-items: center; justify-content: center; transition: background 0.3s;
-            ">
+               width: 48px; height: 48px; border-radius: 14px; background: #6e52e2; border: none; color: white; cursor: pointer;
+               display: flex; align-items: center; justify-content: center; transition: 0.3s; box-shadow: 0 6px 12px rgba(110, 82, 226, 0.2);
+            " onmouseover="this.style.background='#5a3fd1'" onmouseout="this.style.background='#6e52e2'">
                <i class="fas fa-paper-plane"></i>
             </button>
          </div>
       </div>
    </div>
 
+   <style>
+      .quick-link {
+         background: #f0f4ff; border: 1px solid #d0daff; color: #4f6bff; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s;
+      }
+      .quick-link:hover { background: #4f6bff; color: white; }
+      .question-btn {
+         background: #fff; border: 1px solid #ececf1; color: #666; padding: 8px 12px; border-radius: 10px; font-size: 12px; text-align: left; cursor: pointer; transition: 0.2s;
+      }
+      .question-btn:hover { border-color: #6e52e2; color: #6e52e2; background: #f8f7ff; }
+      .chat-link { color: #6e52e2; font-weight: 700; text-decoration: underline !important; }
+      .dot { width: 6px; height: 6px; background: #cbd5e1; border-radius: 50%; display: inline-block; animation: wave 1.3s infinite; }
+      .dot:nth-child(2) { animation-delay: -1.1s; }
+      .dot:nth-child(3) { animation-delay: -0.9s; }
+      @keyframes wave { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-4px); } }
+      
+      /* Dark Mode overrides for Chatbot */
+      body.dark-mode #chatbot-window { background: #1e293b; border-color: #334155; }
+      body.dark-mode #chatbot-messages { background: #0f172a; }
+      body.dark-mode #chatbot-messages > div { background: #1e293b; color: #f1f5f9; border-color: #334155; }
+      body.dark-mode #chatbot-input { background: #334155; border-color: #475569; color: white; }
+      body.dark-mode #typing-indicator > div { background: #334155; }
+   </style>
+
    <script>
+      function handleQuickAction(text) {
+         const input = document.getElementById('chatbot-input');
+         input.value = text;
+         document.getElementById('chatbot-send').click();
+      }
+
       document.addEventListener('DOMContentLoaded', function() {
          const toggleBtn = document.getElementById('chatbot-toggle');
          const closeBtn = document.getElementById('chatbot-close');
@@ -392,27 +492,28 @@
          const chatInput = document.getElementById('chatbot-input');
          const sendBtn = document.getElementById('chatbot-send');
          const messagesContainer = document.getElementById('chatbot-messages');
+         const typingIndicator = document.getElementById('typing-indicator');
 
          toggleBtn.addEventListener('click', () => {
             chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
             if (chatWindow.style.display === 'flex') chatInput.focus();
          });
 
-         closeBtn.addEventListener('click', () => {
-            chatWindow.style.display = 'none';
-         });
+         closeBtn.addEventListener('click', () => chatWindow.style.display = 'none');
 
          function appendMessage(text, isUser) {
             const msgDiv = document.createElement('div');
             msgDiv.style.alignSelf = isUser ? 'flex-end' : 'flex-start';
-            msgDiv.style.background = isUser ? 'linear-gradient(135deg, #18aefa, #6e52e2)' : '#fff';
-            msgDiv.style.color = isUser ? 'white' : '#333';
-            msgDiv.style.padding = '12px 16px';
-            msgDiv.style.borderRadius = isUser ? '15px 15px 0 15px' : '15px 15px 15px 0';
-            msgDiv.style.maxWidth = '80%';
+            msgDiv.style.background = isUser ? 'linear-gradient(135deg, #18aefa, #6e52e2)' : (document.body.classList.contains('dark-mode') ? '#1e293b' : '#fff');
+            msgDiv.style.color = isUser ? 'white' : (document.body.classList.contains('dark-mode') ? '#f1f5f9' : '#444');
+            msgDiv.style.padding = '14px 18px';
+            msgDiv.style.borderRadius = isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px';
+            msgDiv.style.maxWidth = '85%';
             msgDiv.style.fontSize = '14px';
-            msgDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
-            msgDiv.innerText = text;
+            msgDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)';
+            msgDiv.style.border = isUser ? 'none' : '1px solid ' + (document.body.classList.contains('dark-mode') ? '#334155' : '#f0f0f0');
+            msgDiv.innerHTML = text;
+            
             messagesContainer.appendChild(msgDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
          }
@@ -423,6 +524,11 @@
 
             appendMessage(text, true);
             chatInput.value = '';
+            
+            // Show typing indicator
+            typingIndicator.style.display = 'block';
+            messagesContainer.appendChild(typingIndicator); // Move to bottom
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
             try {
                const response = await fetch('/{% if LANGUAGE_CODE %}{{ LANGUAGE_CODE }}/{% endif %}chatbot/respond/', {
@@ -434,19 +540,19 @@
                   body: JSON.stringify({ message: text })
                });
                const data = await response.json();
+               
                setTimeout(() => {
+                  typingIndicator.style.display = 'none';
                   appendMessage(data.response || "Désolé, une erreur est survenue.", false);
-               }, 500);
+               }, 800);
             } catch (error) {
-               console.error("Chatbot Error:", error);
+               typingIndicator.style.display = 'none';
                appendMessage("Erreur de connexion au serveur.", false);
             }
          }
 
          sendBtn.addEventListener('click', sendMessage);
-         chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-         });
+         chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
       });
    </script>
 </body>
