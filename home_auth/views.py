@@ -153,8 +153,8 @@ def dashboard_view(request):
             'student_count': student_count,
             'teacher_count': teacher_count,
             'department_count': department_count,
-            'male_students': Student.objects.filter(gender='Male').count(),
-            'female_students': Student.objects.filter(gender='Female').count(),
+            'male_students': Student.objects.filter(gender__in=['Male', 'M']).count(),
+            'female_students': Student.objects.filter(gender__in=['Female', 'F']).count(),
             'dep_names': dep_names, 'dep_counts': dep_counts,
             'notifications': notifications,
             'present_today': present_today, 'absent_today': absent_today,
@@ -180,6 +180,11 @@ def dashboard_view(request):
         dashboard_service = TeacherDashboardService()
         today_stats = dashboard_service.get_todays_summary(teacher, today)
         alerts_data = dashboard_service.get_teacher_alerts(teacher, today)
+        trends = dashboard_service.get_performance_trends(teacher)
+        top_students = dashboard_service.get_top_performing_students(teacher)
+        at_risk = dashboard_service.get_at_risk_students(teacher)
+        chronic_absentees = dashboard_service.get_chronic_absentees(teacher)
+        
         
         # Latest grades for MY subjects
         latest_grades = Grade.objects.filter(subject__in=my_subjects).select_related('student', 'subject').order_by('-date_recorded')[:10]
@@ -196,6 +201,10 @@ def dashboard_view(request):
             'notifications': notifications,
             'today_stats': today_stats,
             'alerts': alerts_data,
+            'trends': trends,
+            'top_students': top_students,
+            'at_risk': at_risk,
+            'chronic_absentees': chronic_absentees,
             'counters': {
                 'quizzes': Quiz.objects.filter(teacher=teacher).count(),
                 'availabilities': teacher.availabilities.count() if teacher else 0,

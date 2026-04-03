@@ -24,6 +24,15 @@
                 <form method="POST" id="ai-form">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="generate">
+                    <div class="form-group text-left mb-3">
+                        <label class="font-weight-bold text-muted small">Matière associée :</label>
+                        <select name="subject" class="form-control" style="border-radius: 12px;" required>
+                            <option value="">Sélectionnez la matière du Quiz</option>
+                            {% for sub in subjects %}
+                            <option value="{{ sub.id }}">{{ sub.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <textarea name="topic" class="form-control mb-4 p-3" rows="5" 
                         placeholder="Ex: Les causes de la Seconde Guerre Mondiale, ou Le cycle de l'eau..." required
                         style="border-radius: 15px; border: 2px dashed #dee2e6;"></textarea>
@@ -49,6 +58,7 @@
 <form method="POST">
     {% csrf_token %}
     <input type="hidden" name="action" value="save">
+    <input type="hidden" name="subject_id" value="{{ subject_id }}">
     <input type="hidden" name="topic" value="{{ topic }}">
     <input type="hidden" name="q_count" value="{{ questions|length }}">
 

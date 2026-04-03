@@ -23,11 +23,22 @@
                 <h6 class="font-weight-bold mb-2">{{ quiz.title }}</h6>
                 <p class="small text-muted mb-4"><i class="far fa-calendar-alt mr-2"></i> Date limite : {{ quiz.due_date|date:"d M Y"|default:"Aucune" }}</p>
                 
+                {% if quiz.my_attempt %}
+                <div class="alert alert-info p-2 mb-3" style="border-radius: 8px; font-size: 13px;">
+                    <i class="fas fa-check-circle mr-2"></i> <strong>Note : {{ quiz.my_attempt.score|floatformat:2 }}/20</strong>
+                </div>
+                <div class="mt-auto">
+                    <button class="btn btn-secondary btn-block py-2" disabled style="border-radius: 10px; font-weight: 600; opacity: 0.7;">
+                        Déjà passé
+                    </button>
+                </div>
+                {% else %}
                 <div class="mt-auto">
                     <a href="{% url 'take_quiz' quiz_id=quiz.id %}" class="btn btn-primary btn-block py-2 shadow-sm" style="border-radius: 10px; font-weight: 600;">
                         Commencer le Quiz
                     </a>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
