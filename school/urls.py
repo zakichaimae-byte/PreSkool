@@ -21,6 +21,8 @@ urlpatterns += i18n_patterns(
     path('teacher-space/', include('teacher_space.urls')),
     path('student/', include('student.urls')),
     path('faculty/', include('faculty.urls')),
+    path('chatbot/', include('chatbot.urls')),
+    path('analytics/', include('analytics.urls')),
     path('', include('home_auth.urls')),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),

@@ -1,0 +1,64 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="card shadow-sm border-0" style="border-radius: 20px;">
+            <div class="card-header bg-white border-0 py-4 mt-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0 font-weight-bold text-primary">
+                        <i class="fas fa-book-open mr-2 text-primary"></i> Remplir le Cahier de Texte Numérique
+                    </h5>
+                    <a href="{% url 'session_logs_list' %}" class="btn btn-outline-primary btn-sm px-3" style="border-radius: 8px;">
+                        <i class="fas fa-history mr-2"></i> Voir Historique
+                    </a>
+                </div>
+            </div>
+            <div class="card-body px-5">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4 form-group">
+                            <label class="font-weight-bold small text-muted text-uppercase">Matière</label>
+                            {{ form.subject }}
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="font-weight-bold small text-muted text-uppercase">Classe / Section</label>
+                            {{ form.class_name }}
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label class="font-weight-bold small text-muted text-uppercase">Date de la Séance</label>
+                            {{ form.date }}
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label class="font-weight-bold small text-muted text-uppercase">Résumé du cours (objectifs, points abordés)</label>
+                        {{ form.summary }}
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label class="font-weight-bold small text-muted text-uppercase">Devoirs à faire (pour la séance prochaine)</label>
+                        {{ form.homework }}
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label class="font-weight-bold small text-muted text-uppercase">Support de cours (PDF, Images, etc.)</label>
+                        <div class="custom-file-upload p-3 bg-light text-center border-dashed rounded-lg" style="border: 2px dashed #ddd;">
+                            {{ form.attachment }}
+                            <p class="small text-muted mt-2 mb-0">Taille max : 5 MB</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-5 mb-4 text-center">
+                        <button type="submit" class="btn btn-primary px-5 py-3 shadow-sm" style="border-radius: 12px; font-weight: 600; letter-spacing: 0.5px;">
+                            Enregistrer la Séance
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

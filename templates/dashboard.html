@@ -171,6 +171,91 @@
         </div>
     </div>
 </div>
+{% if not user.is_superuser and user.groups.all.0.name != "Enseignant" %}
+<!-- ═══════════════════════════════════════════
+     SECTION SERVICES ÉTUDIANTS (Premium View)
+════════════════════════════════════════════ -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="font-weight-bold mb-0">🚀 Mes Services Digitaux</h5>
+            <span class="badge badge-pill badge-primary-soft px-3 py-1 small">4 Services Actifs</span>
+        </div>
+    </div>
+    
+    <!-- Cahier de Texte -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #0fb478, #078a5b); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-book-reader fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-book-open"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ digital_logbook }}</h6>
+                <p class="small opacity-80 mb-3">Consultez vos cours & devoirs</p>
+                <a href="{% url 'student_session_logs' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Ouvrir</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quiz -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #1e90ff, #1c75d4); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-question-circle fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-vial"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ my_quizzes }}</h6>
+                <p class="small opacity-80 mb-3">Évaluations interactives</p>
+                <a href="{% url 'student_quiz_list' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Passer un Quiz</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RDV -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #f39c12, #d35400); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-calendar-alt fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-calendar-check"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ my_appointments }}</h6>
+                <p class="small opacity-80 mb-3">Rencontrez vos professeurs</p>
+                <a href="{% url 'student_appointments' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Gérer mes RDV</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Performance -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #8e44ad, #732d91); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-chart-line fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-chart-pie"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ my_performance }}</h6>
+                <p class="small opacity-80 mb-3">Analyse IA de vos résultats</p>
+                <a href="{% url 'student_performance' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Mon Analyse</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bibliothèque -->
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #34495e, #2c3e50); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-book fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-book-reader"></i></div>
+                <h6 class="font-weight-bold mb-1">Bibliothèque</h6>
+                <p class="small opacity-80 mb-3">Rechercher & Emprunter</p>
+                <a href="{% url 'book_list' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Voir les livres</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-white-20 { background: rgba(255,255,255,0.2); }
+    .icon-box-sm { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .btn-light:hover { background: #f8f9fa !important; transform: scale(1.02); }
+    .badge-primary-soft { background: #eef2ff; color: #4f46e5; border: 1px solid #c7d2fe; }
+</style>
+{% endif %}
 
 {% if user.is_superuser %}
 
@@ -228,6 +313,96 @@
                         <div class="progress-bar bg-success" style="width:85%"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     NOUVELLE SECTION — Services Digitaux Premium
+════════════════════════════════════════════ -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="font-weight-bold mb-0">🚀 Services Académiques Digitaux</h5>
+            <span class="badge badge-pill badge-primary-soft px-3 py-1 small">Gestion Intégrée</span>
+        </div>
+    </div>
+    
+    <!-- Analyse IA -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-robot fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-microchip"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ ai_analysis }}</h6>
+                <p class="small opacity-80 mb-3">Prédiction des risques élèves</p>
+                <a href="{% url 'dropout_risk' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Ouvrir l'Analyse</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Générateur de Quiz IA -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #ec4899, #be185d); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-magic fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-brain"></i></div>
+                <h6 class="font-weight-bold mb-1">Générateur de Quiz IA</h6>
+                <p class="small opacity-80 mb-3">Questions automatiques par sujet</p>
+                <a href="{% url 'generate_quiz_ai' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Lancer l'IA</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #18aefa, #1a82f3); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-question-circle fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-tasks"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ my_quizzes }}</h6>
+                <p class="small opacity-80 mb-3">Gérer les évaluations</p>
+                <a href="{% url 'quiz_list_teacher' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Gérer les Quiz</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cahier de Texte -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #10b981, #059669); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-book-open fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-history"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ digital_logbook }}</h6>
+                <p class="small opacity-80 mb-3">Logs de sessions pédagogiques</p>
+                <a href="{% url 'session_logs_list' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Consulter les Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- RDV -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-calendar-check fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-calendar-alt"></i></div>
+                <h6 class="font-weight-bold mb-1">{{ my_appointments }}</h6>
+                <p class="small opacity-80 mb-3">Rencontres Parents-Professeurs</p>
+                <a href="{% url 'teacher_appointments' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Planning RDV</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bibliothèque -->
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="card premium-card border-0 shadow-sm h-100 overflow-hidden" style="background: linear-gradient(135deg, #34495e, #2c3e50); color: white; border-radius: 20px;">
+            <div class="card-body p-4 position-relative">
+                <i class="fas fa-book fa-3x position-absolute" style="right: -10px; bottom: -10px; opacity: 0.15;"></i>
+                <div class="icon-box-sm bg-white-20 mb-3"><i class="fas fa-book-reader"></i></div>
+                <h6 class="font-weight-bold mb-1">Bibliothèque (Librarian)</h6>
+                <p class="small opacity-80 mb-3">Stock & Gestion des Emprunts</p>
+                <a href="{% url 'manage_borrowings' %}" class="btn btn-sm btn-light btn-block font-weight-bold" style="border-radius: 12px;">Gérer les Prêts</a>
             </div>
         </div>
     </div>
@@ -577,73 +752,199 @@ document.addEventListener("DOMContentLoaded", function() {
 
 {% if role == 'teacher' %}
 <!-- ═══════════════════════════════════════════
-     DASHBOARD ENSEIGNANT
+     DASHBOARD ENSEIGNANT AVANCÉ
      ════════════════════════════════════════════ -->
-<div class="row">
-    <!-- Mes Matières -->
-    <div class="col-xl-4 col-sm-6 d-flex mb-4">
-        <div class="card premium-card w-100 p-2">
-            <div class="card-body">
-                <div class="stat-icon bg-grad-one">
-                    <i class="fas fa-book-open"></i>
+
+<!-- 1. RÉSUMÉ DE LA JOURNÉE & ALERTES -->
+<div class="row mb-4">
+    <!-- Résumé du jour -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 20px; background: #fff;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="font-weight-bold mb-0"><i class="fas fa-sun text-warning mr-2"></i> Aujourd'hui : {% now "j F Y" %}</h5>
+                    <span class="badge badge-pill badge-primary px-3 py-1 small">Aperçu rapide</span>
                 </div>
-                <div class="db-info">
-                    <h6 class="text-muted mb-1">Mes Matières</h6>
-                    <h3 class="font-weight-bold mb-0">{{ my_subjects_count }}</h3>
-                    <p class="text-xs text-muted mt-2">Réparties sur <strong>{{ my_classes_count }}</strong> classes.</p>
+                <div class="row text-center">
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded-xl">
+                            <h3 class="font-weight-bold text-primary mb-0">{{ today_stats.classes }}</h3>
+                            <p class="text-xs text-muted mb-0">Classes prévues</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded-xl">
+                            <h3 class="font-weight-bold text-danger mb-0">{{ today_stats.absences }}</h3>
+                            <p class="text-xs text-muted mb-0">Absences enregistrées</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded-xl">
+                            <h3 class="font-weight-bold text-warning mb-0">{{ today_stats.to_grade }}</h3>
+                            <p class="text-xs text-muted mb-0">Devoirs à corriger</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded-xl">
+                            <h3 class="font-weight-bold text-info mb-0">{{ today_stats.apps }}</h3>
+                            <p class="text-xs text-muted mb-0">Rendez-vous prévus</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded-xl">
+                            <h3 class="font-weight-bold text-secondary mb-0">{{ today_stats.missing_logs }}</h3>
+                            <p class="text-xs text-muted mb-0">Logs non publiés</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4 mb-3">
+                        <div class="p-3 bg-light rounded-xl">
+                            <h3 class="font-weight-bold text-success mb-0">{{ counters.notes_today }}</h3>
+                            <p class="text-xs text-muted mb-0">Notes saisies</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Mes Élèves -->
-    <div class="col-xl-4 col-sm-6 d-flex mb-4">
-        <div class="card premium-card w-100 p-2">
-            <div class="card-body">
-                <div class="stat-icon bg-grad-two">
-                    <i class="fas fa-user-graduate"></i>
+    <!-- Alertes & Rappels -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 20px; background: #fff;">
+            <div class="card-body p-4">
+                <h5 class="font-weight-bold mb-4"><i class="fas fa-bell text-danger mr-2"></i> Alertes</h5>
+                
+                {% if alerts.no_attendance > 0 %}
+                <div class="d-flex align-items-center mb-3 p-2 rounded-lg bg-soft-danger">
+                    <div class="icon-box-sm bg-danger text-white mr-3"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div>
+                        <p class="mb-0 font-weight-bold small text-danger">{{ alerts.no_attendance }} classes sans présence</p>
+                        <p class="text-xs text-muted mb-0">Appel à faire aujourd'hui</p>
+                    </div>
                 </div>
+                {% endif %}
+
+                {% if alerts.pending_apps > 0 %}
+                <div class="d-flex align-items-center mb-3 p-2 rounded-lg bg-soft-warning">
+                    <div class="icon-box-sm bg-warning text-white mr-3"><i class="fas fa-clock"></i></div>
+                    <div>
+                        <p class="mb-0 font-weight-bold small text-warning">{{ alerts.pending_apps }} demandes de RDV</p>
+                        <p class="text-xs text-muted mb-0">En attente de validation</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if alerts.overdue_books > 0 %}
+                <div class="d-flex align-items-center mb-3 p-2 rounded-lg bg-soft-info">
+                    <div class="icon-box-sm bg-info text-white mr-3"><i class="fas fa-book-reader"></i></div>
+                    <div>
+                        <p class="mb-0 font-weight-bold small text-info">{{ alerts.overdue_books }} livres en retard</p>
+                        <p class="text-xs text-muted mb-0">Relances nécessaires</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if alerts.next_app %}
+                <div class="mt-4 p-3 border rounded-xl bg-light">
+                    <p class="text-xs text-uppercase font-weight-bold text-muted mb-2">Prochain Rendez-vous</p>
+                    <p class="mb-1 font-weight-bold small">{{ alerts.next_app.parent.first_name }} {{ alerts.next_app.parent.last_name }}</p>
+                    <p class="text-xs text-primary mb-0"><i class="far fa-clock mr-1"></i> {{ alerts.next_app.time_slot|time:"H:i" }} ({% if alerts.next_app.date == today %}Aujourd'hui{% else %}{{ alerts.next_app.date|date:"d/m" }}{% endif %})</p>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <p class="text-muted small">Aucun rappel urgent.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. CARTES STATISTIQUES ÉTENDUES -->
+<div class="row">
+    <!-- Mes Matières -->
+    <div class="col-xl-3 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2 border-0">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-one"><i class="fas fa-book"></i></div>
                 <div class="db-info">
-                    <h6 class="text-muted mb-1">Mes Élèves</h6>
+                    <h6 class="text-muted mb-1 small">Matières</h6>
+                    <h3 class="font-weight-bold mb-0">{{ my_subjects_count }}</h3>
+                    <p class="text-xs text-muted mt-1">Sur <strong>{{ my_classes_count }}</strong> classes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mes Élèves -->
+    <div class="col-xl-3 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2 border-0">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-two"><i class="fas fa-user-graduate"></i></div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1 small">Total Élèves</h6>
                     <h3 class="font-weight-bold mb-0">{{ my_students_count }}</h3>
-                    <p class="text-xs text-muted mt-2">Nombre total d'élèves dans vos classes.</p>
+                    <p class="text-xs text-muted mt-1">Inscrits à vos cours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mes Quiz -->
+    <div class="col-xl-3 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2 border-0">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-three"><i class="fas fa-vial"></i></div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1 small">Quiz Créés</h6>
+                    <h3 class="font-weight-bold mb-0">{{ counters.quizzes }}</h3>
+                    <p class="text-xs text-muted mt-1">Evaluations en ligne.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mes Disponibilités -->
+    <div class="col-xl-3 col-sm-6 d-flex mb-4">
+        <div class="card premium-card w-100 p-2 border-0">
+            <div class="card-body">
+                <div class="stat-icon bg-grad-four"><i class="fas fa-calendar-alt"></i></div>
+                <div class="db-info">
+                    <h6 class="text-muted mb-1 small">Disponibilités</h6>
+                    <h3 class="font-weight-bold mb-0">{{ counters.availabilities }}</h3>
+                    <p class="text-xs text-muted mt-1">Créneaux enregistrés.</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- 3. TABLEAUX & DÉTAILS -->
 <div class="row mb-4">
-    <div class="col-12">
-        <div class="card premium-card card-stripe-grades">
+    <div class="col-md-8">
+        <div class="card premium-card border-0 shadow-sm h-100">
             <div class="card-header bg-white border-0 py-3">
-                <h5 class="section-title">
-                    <i class="fas fa-star"></i> Mes Dernières Notes Saisies
-                </h5>
+                <h5 class="section-title mb-0"><i class="fas fa-star text-warning"></i> Dernières Notes Saisies</h5>
             </div>
-            <div class="card-body">
-                <div class="table-scroll-wrapper">
-                    <table class="grade-table">
-                        <thead>
-                            <tr>
-                                <th>Élève</th>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light">
+                            <tr class="small font-weight-bold text-muted">
+                                <th class="pl-4">Élève</th>
                                 <th>Classe</th>
                                 <th>Matière</th>
                                 <th>Note</th>
-                                <th>Date</th>
+                                <th class="pr-4">Date</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for grade in latest_grades %}
-                            <tr>
-                                <td><strong>{{ grade.student.first_name }} {{ grade.student.last_name }}</strong></td>
-                                <td><span style="font-size:0.85rem; color:#6366f1; font-weight:600;">{{ grade.student.student_class }}</span></td>
-                                <td>{{ grade.subject.name }}</td>
-                                <td><span class="score-badge {% if grade.score >= 10 %}score-good{% else %}score-fail{% endif %}">{{ grade.score }}/20</span></td>
-                                <td style="color:#6b7280;font-size:0.83rem;">{{ grade.date_recorded|date:"d/m/Y" }}</td>
+                            <tr class="small">
+                                <td class="pl-4 align-middle"><strong>{{ grade.student.first_name }} {{ grade.student.last_name }}</strong></td>
+                                <td class="align-middle text-primary font-weight-bold">{{ grade.student.student_class }}</td>
+                                <td class="align-middle">{{ grade.subject.name }}</td>
+                                <td class="align-middle"><span class="badge {% if grade.score >= 10 %}badge-soft-success{% else %}badge-soft-danger{% endif %} px-2 py-1">{{ grade.score }}/20</span></td>
+                                <td class="pr-4 align-middle text-muted">{{ grade.date_recorded|date:"d/m/Y" }}</td>
                             </tr>
                             {% empty %}
-                            <tr><td colspan="5" class="text-center text-muted py-5">Aucune note saisie récemment.</td></tr>
+                            <tr><td colspan="5" class="text-center py-5 text-muted">Aucune note récente.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -651,7 +952,54 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
         </div>
     </div>
+
+    <!-- Planning Disponibilité / Demandes -->
+    <div class="col-md-4">
+        <div class="card premium-card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0 py-3">
+                <h5 class="section-title mb-0"><i class="fas fa-clock text-info"></i> Planning & Disponibilités</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3 text-center">
+                    <div class="w-50 border-right">
+                        <h4 class="font-weight-bold mb-0 text-success">{{ counters.availabilities }}</h4>
+                        <p class="text-xs text-muted mb-0">Total créneaux</p>
+                    </div>
+                    <div class="w-50">
+                        <h4 class="font-weight-bold mb-0 text-primary">{{ alerts.pending_apps }}</h4>
+                        <p class="text-xs text-muted mb-0">En attente</p>
+                    </div>
+                </div>
+                
+                <p class="small font-weight-bold text-muted mb-2">Actions rapides</p>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'manage_availability' %}" class="list-group-item list-group-item-action px-0 border-0 py-2 d-flex align-items-center">
+                        <div class="icon-box-xs bg-soft-primary text-primary mr-3"><i class="fas fa-plus"></i></div>
+                        <span class="small">Ajouter des créneaux</span>
+                    </a>
+                    <a href="{% url 'teacher_appointments' %}" class="list-group-item list-group-item-action px-0 border-0 py-2 d-flex align-items-center">
+                        <div class="icon-box-xs bg-soft-info text-info mr-3"><i class="fas fa-calendar-check"></i></div>
+                        <span class="small">Valider les demandes</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .bg-soft-danger { background: #fee2e2; }
+    .bg-soft-warning { background: #fef3c7; }
+    .bg-soft-success { background: #dcfce7; }
+    .bg-soft-primary { background: #eef2ff; }
+    .bg-soft-info { background: #e0f2fe; }
+    .badge-soft-success { background: #def7ec; color: #046c4e; }
+    .badge-soft-danger { background: #fde8e8; color: #c81e1e; }
+    .rounded-xl { border-radius: 12px; }
+    .rounded-lg { border-radius: 10px; }
+    .icon-box-xs { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+    .text-xs { font-size: 0.72rem; }
+</style>
 {% endif %}
 
 {% if role == 'student' %}

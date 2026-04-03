@@ -2,52 +2,55 @@
 {% load static %}
 
 {% block body %}
-<div class="page-header">
-    <div class="row align-items-center">
-        <div class="col">
-            <h3 class="page-title">Ajouter un Livre</h3>
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'book_list' %}">Bibliothèque</a></li>
-                <li class="breadcrumb-item active">Ajouter</li>
-            </ul>
-        </div>
+<div class="row mb-4">
+    <div class="col-md-12 text-center">
+        <h3 class="font-weight-bold">📚 Nouveau <span class="text-primary">Livre</span></h3>
+        <p class="text-muted small">Ajoutez une nouvelle ressource au catalogue.</p>
     </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
-                <form method="POST">
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 20px;">
+            <div class="card-body p-5">
+                <form method="POST" action="{% url 'book_add' %}">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label>Titre du livre</label>
-                                <input type="text" name="title" class="form-control" required>
-                            </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold small">Titre du Livre <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control px-3" placeholder="Ex: Harry Potter" required style="border-radius: 10px; height: 45px;">
                         </div>
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label>Auteur</label>
-                                <input type="text" name="author" class="form-control" required>
-                            </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold small">Auteur <span class="text-danger">*</span></label>
+                            <input type="text" name="author" class="form-control px-3" placeholder="Nom de l'auteur" required style="border-radius: 10px; height: 45px;">
                         </div>
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label>ISBN</label>
-                                <input type="text" name="isbn" class="form-control">
-                            </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold small">ISBN</label>
+                            <input type="text" name="isbn" class="form-control px-3" placeholder="ISBN-13" style="border-radius: 10px; height: 45px;">
                         </div>
-                        <div class="col-12 col-sm-6">
-                            <div class="form-group">
-                                <label>Quantité</label>
-                                <input type="number" name="quantity" class="form-control" value="1" min="1" required>
-                            </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="font-weight-bold small">Catégorie <span class="text-danger">*</span></label>
+                            <select name="category" class="form-control px-3" required style="border-radius: 10px; height: 45px;">
+                                <option value="scientific">Scientifique</option>
+                                <option value="literary">Littéraire</option>
+                                <option value="historical">Historique</option>
+                                <option value="artistic">Artistique</option>
+                                <option value="other" selected>Autre</option>
+                            </select>
                         </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-primary">Ajouter à la bibliothèque</button>
+                        <div class="col-md-12 mb-4">
+                            <label class="font-weight-bold small">Quantité Initiale <span class="text-danger">*</span></label>
+                            <input type="number" name="quantity" class="form-control px-3" value="1" min="1" required style="border-radius: 10px; height: 45px;">
                         </div>
+                        <div class="col-md-12 mb-4">
+                            <label class="font-weight-bold small">Description (Optionnel)</label>
+                            <textarea name="description" class="form-control px-3" rows="3" placeholder="Résumé rapide du livre..." style="border-radius: 15px;"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="text-right mt-3">
+                        <a href="{% url 'book_list' %}" class="btn btn-light px-4 mr-2" style="border-radius: 10px;">Annuler</a>
+                        <button type="submit" class="btn btn-primary px-5 shadow-sm" style="border-radius: 10px;">Enregistrer</button>
                     </div>
                 </form>
             </div>

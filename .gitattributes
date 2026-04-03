@@ -1,0 +1,11 @@
+# Mark templates as documentation/vendored so they don't dominate the language stats
+templates/**/*.html linguist-documentation
+templates/*.html linguist-documentation
+
+# Mark static assets as vendored
+static/**/*.css linguist-vendored
+static/**/*.js linguist-vendored
+static/**/*.json linguist-vendored
+
+# Ensure Python is recognized as the primary language
+*.py linguist-detectable

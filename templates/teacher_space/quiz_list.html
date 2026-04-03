@@ -1,0 +1,57 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h4 class="font-weight-bold">Mes Quiz et Évaluations</h4>
+    </div>
+    <div class="col-auto text-right float-right ml-auto">
+        <a href="{% url 'generate_quiz_ai' %}" class="btn btn-outline-primary px-4 mr-2" style="border-radius: 10px;">
+            <i class="fas fa-magic mr-2"></i> Générer avec IA
+        </a>
+        <a href="{% url 'create_quiz' %}" class="btn btn-primary px-4 shadow-sm" style="border-radius: 10px;">
+            <i class="fas fa-plus mr-2"></i> Créer un Quiz
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    {% for quiz in quizzes %}
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden; transition: transform 0.3s ease;">
+            <div class="card-header bg-primary text-white border-0 py-3">
+                <h6 class="mb-0 font-weight-bold">{{ quiz.title }}</h6>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small mb-2"><i class="fas fa-book mr-2"></i> {{ quiz.subject.name }}</p>
+                <p class="text-muted small mb-2"><i class="fas fa-calendar-alt mr-2"></i> Créé le : {{ quiz.created_at|date:"d/m/Y" }}</p>
+                <p class="text-muted small mb-3"><i class="fas fa-question-circle mr-2"></i> {{ quiz.questions.count }} Questions</p>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a href="{% url 'add_question' quiz_id=quiz.id %}" class="btn btn-outline-primary btn-sm px-3" style="border-radius: 8px;">
+                            <i class="fas fa-edit mr-1"></i> Modifier
+                        </a>
+                        <a href="{% url 'delete_quiz' quiz_id=quiz.id %}" class="btn btn-outline-danger btn-sm px-2 ml-1" 
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce quiz définitvement ?')" 
+                           style="border-radius: 8px;">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                    <span class="badge badge-success px-2 py-1" style="border-radius: 6px; font-size: 10px;">{{ quiz.questions.count }} Qs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-md-12 text-center py-5">
+        <div class="bg-light p-5 rounded-circle d-inline-block mb-3">
+            <i class="fas fa-clipboard-list fa-3x text-muted"></i>
+        </div>
+        <h5 class="text-muted">Aucun quiz créé pour le moment.</h5>
+        <a href="{% url 'create_quiz' %}" class="text-primary font-weight-bold">Créer votre premier quiz dès maintenant</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends 'Home/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h4 class="font-weight-bold ml-2">Mes Quiz Disponibles</h4>
+        <p class="text-muted ml-2">Consultez et passez vos évaluations en ligne.</p>
+    </div>
+</div>
+
+<div class="row">
+    {% for quiz in quizzes %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card shadow-sm border-0 h-100" style="border-radius: 12px; overflow: hidden; transition: transform 0.2s ease;">
+            <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-start">
+                <div class="bg-soft-primary p-3 rounded-circle mb-3" style="background: rgba(24, 174, 250, 0.1);">
+                    <i class="fas fa-clipboard-check text-primary fa-lg"></i>
+                </div>
+                <span class="badge badge-soft-warning px-2 py-1" style="border-radius: 6px;">{{ quiz.subject.name }}</span>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <h6 class="font-weight-bold mb-2">{{ quiz.title }}</h6>
+                <p class="small text-muted mb-4"><i class="far fa-calendar-alt mr-2"></i> Date limite : {{ quiz.due_date|date:"d M Y"|default:"Aucune" }}</p>
+                
+                <div class="mt-auto">
+                    <a href="{% url 'take_quiz' quiz_id=quiz.id %}" class="btn btn-primary btn-block py-2 shadow-sm" style="border-radius: 10px; font-weight: 600;">
+                        Commencer le Quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-md-12 text-center py-5">
+        <div class="bg-light p-5 rounded-circle d-inline-block mb-3">
+            <i class="fas fa-search fa-3x text-muted"></i>
+        </div>
+        <h5 class="text-muted">Aucun quiz disponible pour le moment.</h5>
+        <p class="small text-muted">Revenez plus tard pour voir vos nouvelles évaluations.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
